@@ -8,7 +8,7 @@ fi
 OUTFILE="${1%.*}.out"
 echo "Compiling $1 to $OUTFILE"
 
-if cc -o "$OUTFILE" "$1"; then
+if cc -Werror -o "$OUTFILE" "$1"; then
     echo "Compilation successful."
     echo "Executing $OUTFILE:"
     echo "-------------------------------------------------"
