@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ] || [[ ! "$1" =~ \.c$ ]]; then
+    echo "Usage: run_c file_name.c"
+    exit 1
+fi
+
+OUTFILE="${1%.*}.out"
+echo "Compiling $1 to $OUTFILE"
+
+if cc -o "$OUTFILE" "$1"; then
+    echo "Compilation successful."
+    echo "Executing $OUTFILE:"
+    echo "-------------------------------------------------"
+    "./$OUTFILE"
+    echo "-------------------------------------------------"
+    echo "Execution finished. Removing $OUTFILE"
+    rm "$OUTFILE"
+else
+    echo "Compilation failed."
+    exit 1
+fi
