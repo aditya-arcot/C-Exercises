@@ -1,0 +1,55 @@
+#!/bin/bash
+
+show_help() {
+    echo "Usage: compile_c [options] file_name.c"
+    echo ""
+    echo "Options:"
+    echo "  -n, --no-execute    Don't execute the compiled program"
+    echo "  -h, --help          Display this help message"
+}
+
+EXECUTE=true
+while [[ "$1" == -* ]]; do
+    case $1 in
+        -n | --no-execute)
+            EXECUTE=false
+            ;;
+        -h | --help)
+            show_help
+            exit
+            ;;
+        *)
+            echo "Invalid option: $1"
+            show_help
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+if [ "$#" -ne 1 ] || [[ ! "$1" =~ \.c$ ]]; then
+    echo "Invalid file name."
+    show_help
+    exit 1
+fi
+
+FILENAME="$1"
+OUTFILE="${FILENAME%.*}.out"
+
+echo "Compiling $FILENAME to $OUTFILE"
+if cc -Werror -o "$OUTFILE" "$FILENAME"; then
+    echo "Compilation successful."
+    if $EXECUTE; then
+        echo "Executing $OUTFILE:"
+        echo "-------------------------------------------------"
+        "./$OUTFILE"
+        echo "-------------------------------------------------"
+            echo "Execution finished. Removing $OUTFILE"
+        rm "$OUTFILE"
+    else 
+        echo "Execution skipped."
+    fi
+else
+    echo "Compilation failed."
+    exit 1
+fi
