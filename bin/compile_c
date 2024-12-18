@@ -8,6 +8,10 @@ show_help() {
     echo "  -h, --help          Display this help message"
 }
 
+separator() {
+    printf '%*s\n' "$(tput cols)" '' | tr ' ' '='
+}
+
 EXECUTE=true
 while [[ "$1" == -* ]]; do
     case $1 in
@@ -41,10 +45,10 @@ if cc -Werror -o "$OUTFILE" "$FILENAME"; then
     echo "Compilation successful."
     if $EXECUTE; then
         echo "Executing $OUTFILE:"
-        echo "-------------------------------------------------"
+        separator
         "./$OUTFILE"
-        echo "-------------------------------------------------"
-            echo "Execution finished. Removing $OUTFILE"
+        separator
+        echo "Execution finished. Removing $OUTFILE"
         rm "$OUTFILE"
     else 
         echo "Execution skipped."
