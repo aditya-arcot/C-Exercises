@@ -1,3 +1,5 @@
+// print input word count
+
 #include <stdio.h>
 
 #define TRUE 1
@@ -13,8 +15,9 @@ int main()
         {
             in_word = FALSE;
         }
-        else if (!in_word) {
-            words++;
+        else if (!in_word)
+        {
+            ++words;
             in_word = TRUE;
         }
     }

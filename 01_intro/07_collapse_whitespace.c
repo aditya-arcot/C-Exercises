@@ -1,6 +1,6 @@
-#include <stdio.h>
+// print input with whitespace collapsed
 
-// collapse whitespace into single space
+#include <stdio.h>
 
 #define TRUE 1
 #define FALSE 0

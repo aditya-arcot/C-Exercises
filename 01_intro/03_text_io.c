@@ -1,6 +1,6 @@
-#include <stdio.h>
+// print input characters separated by spaces
 
-// print characters separated by spaces
+#include <stdio.h>
 
 int main()
 {
