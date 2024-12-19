@@ -1,3 +1,5 @@
+// print counts of lines, blanks, and tabs from input
+
 #include <stdio.h>
 
 int main()
@@ -8,11 +10,11 @@ int main()
     while ((ch = getchar()) != EOF)
     {
         if (ch == ' ')
-            blanks++;
+            ++blanks;
         else if (ch == '\t')
-            tabs++;
+            ++tabs;
         else if (ch == '\n')
-            lines++;
+            ++lines;
     }
 
     printf("%d lines, %d blanks, %d tabs\n", lines, blanks, tabs);

@@ -1,3 +1,5 @@
+// print input character count
+
 #include <stdio.h>
 
 int main()
@@ -6,10 +8,9 @@ int main()
 
     // count = 0;
     // while (getchar() != EOF)
-    //     count++;
+    //     ++count;
 
-    for (count = 0; getchar() != EOF; count++)
+    for (count = 0; getchar() != EOF; ++count)
         ;
-
     printf("%d characters\n", count);
 }
