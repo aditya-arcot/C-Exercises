@@ -3,13 +3,13 @@
 
     done
         unrecognized preprocessor directive
+        mismatched or missing bracket
 
     to do
-        unmatched or incorrectly nested parenthesis, bracket, brace
         unclosed single or double quote
-        - must be on same line unless escaped
+         - must be on same line unless escaped
         invalid character constant
-        - empty, multi-char
+         - empty, multi-char
         invalid escape sequence
         unclosed multi-line comment
 */
@@ -22,6 +22,7 @@
 #define SUCCESS 0
 #define NULL_CHAR '\0'
 #define MAX_DIRECTIVE_NAME_LENGTH 7
+#define MAX_BRACKETS_STACK_LENGTH 1000
 
 const char *valid_directives[] = {"define", "include", "if", "ifdef", "ifndef", "else", "elif", "endif", "undef", "pragma"};
 
@@ -35,6 +36,9 @@ int directive_name_done = FALSE;
 int directive_name_idx = 0;
 char directive_buffer[MAX_DIRECTIVE_NAME_LENGTH + 1];
 
+int brackets_stack_idx = 0;
+char brackets_stack[MAX_BRACKETS_STACK_LENGTH + 1];
+
 int handle_char(char ch);
 int perform_newline_checks();
 void reset_vars();
@@ -42,10 +46,15 @@ int push_directive_name_char(char ch);
 void print_directive_name();
 int is_valid_directive();
 int is_matching_strings(const char *a, const char *b);
+int push_bracket(char ch);
+char pop_bracket();
+char get_opening_bracket(char closing_bracket);
+void print_brackets_stack();
 
 int main()
 {
     directive_buffer[MAX_DIRECTIVE_NAME_LENGTH] = NULL_CHAR;
+    brackets_stack[MAX_BRACKETS_STACK_LENGTH] = NULL_CHAR;
 
     int ch;
     while ((ch = getchar()) != EOF)
@@ -56,11 +65,21 @@ int main()
             return ERROR;
         }
     }
+
     if (perform_newline_checks())
     {
         printf(" - line %d, col %d\n", line, col);
         return ERROR;
     }
+
+    if (brackets_stack_idx > 0)
+    {
+        printf("Unclosed brackets - ");
+        print_brackets_stack();
+        printf("\n");
+        return ERROR;
+    }
+
     printf("Checked %d lines. No syntax errors\n", line + 1);
 }
 
@@ -104,6 +123,31 @@ int handle_char(char ch)
         directive_line = TRUE;
         return SUCCESS;
     }
+    else if (ch == '(' || ch == '{' || ch == '[')
+    {
+        if (push_bracket(ch))
+        {
+            return ERROR;
+        }
+        non_blank_line = TRUE;
+        return SUCCESS;
+    }
+    else if (ch == ')' || ch == '}' || ch == ']')
+    {
+        char expected_bracket = get_opening_bracket(ch);
+        if (expected_bracket == ERROR)
+            return ERROR;
+        char opening_bracket = pop_bracket();
+        if (opening_bracket == ERROR)
+            return ERROR;
+        if (opening_bracket != expected_bracket)
+        {
+            printf("Mismatched brackets - %c, %c", opening_bracket, ch);
+            return ERROR;
+        }
+        non_blank_line = TRUE;
+        return SUCCESS;
+    }
 
     non_blank_line = TRUE;
 
@@ -142,7 +186,6 @@ int push_directive_name_char(char ch)
     {
         return ERROR;
     }
-
     directive_buffer[directive_name_idx++] = ch;
     return SUCCESS;
 }
@@ -179,4 +222,43 @@ int is_matching_strings(const char *a, const char *b)
         ++b;
     }
     return *a == NULL_CHAR && *b == NULL_CHAR;
+}
+
+int push_bracket(char ch)
+{
+    if (brackets_stack_idx == MAX_BRACKETS_STACK_LENGTH)
+    {
+        printf("Reached maximum brackets stack depth");
+        return ERROR;
+    }
+    brackets_stack[brackets_stack_idx++] = ch;
+    return SUCCESS;
+}
+
+char pop_bracket()
+{
+    if (brackets_stack_idx == 0)
+    {
+        printf("No opening brackets in the stack");
+        return ERROR;
+    }
+    return brackets_stack[--brackets_stack_idx];
+}
+
+char get_opening_bracket(char closing_bracket)
+{
+    if (closing_bracket == '}')
+        return '{';
+    if (closing_bracket == ')')
+        return '(';
+    if (closing_bracket == ']')
+        return '[';
+    printf("Invalid closing bracket - %c\n", closing_bracket);
+    return ERROR;
+}
+
+void print_brackets_stack()
+{
+    for (int i = 0; i < brackets_stack_idx; ++i)
+        printf("%c", brackets_stack[i]);
 }
