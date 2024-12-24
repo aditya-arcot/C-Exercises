@@ -3,15 +3,14 @@
 
     done
         unrecognized preprocessor directive
-        mismatched or missing bracket
+        unclosed or mismatched bracket
         unclosed multi-line comment
+        unclosed or invalid character constant
+        invalid escape sequence
 
     to do
-        unclosed single or double quote
-         - must be on same line unless escaped
-        invalid character constant
-         - empty, multi-char
-        invalid escape sequence
+        unclosed string
+        multi-line character constant or string
 */
 
 #include <stdio.h>
@@ -23,8 +22,10 @@
 #define NULL_CHAR '\0'
 #define MAX_DIRECTIVE_NAME_LENGTH 7
 #define MAX_BRACKETS_STACK_LENGTH 1000
+#define MAX_CHAR_LENGTH 2
 
 const char *valid_directives[] = {"define", "include", "if", "ifdef", "ifndef", "else", "elif", "endif", "undef", "pragma"};
+const char valid_escapes[] = {'a', 'b', 'f', 'n', 'r', 't', 'v', '\\', '\'', '"', '?', '0'};
 
 int line = 1;
 int col = 1;
@@ -42,6 +43,13 @@ char brackets_stack[MAX_BRACKETS_STACK_LENGTH + 1];
 int in_single_comment = FALSE;
 int in_multi_comment = FALSE;
 
+int in_char = FALSE;
+int char_buffer_idx = 0;
+char char_buffer[MAX_CHAR_LENGTH + 1];
+
+int escaped = FALSE;
+
+int are_matching_strings(const char *a, const char *b);
 void print_syntax_err();
 int check_syntax();
 int handle_char(char ch);
@@ -51,17 +59,19 @@ int push_directive_name_char(char ch);
 void print_directive_name();
 void print_invalid_directive_name_err();
 int is_valid_directive();
-int is_matching_strings(const char *a, const char *b);
 int push_bracket(char ch);
 char pop_bracket();
 char get_opening_bracket(char closing_bracket);
 void print_brackets_stack();
 void print_unclosed_brackets_err();
+int push_char(char ch);
+int is_valid_escape(char escape);
 
 int main()
 {
     directive_buffer[MAX_DIRECTIVE_NAME_LENGTH] = NULL_CHAR;
     brackets_stack[MAX_BRACKETS_STACK_LENGTH] = NULL_CHAR;
+    char_buffer[MAX_CHAR_LENGTH] = NULL_CHAR;
 
     if (check_syntax())
     {
@@ -69,6 +79,20 @@ int main()
         return ERROR;
     }
     printf("Checked %d lines. No syntax errors\n", line);
+}
+
+int are_matching_strings(const char *a, const char *b)
+{
+    while (*a && *b)
+    {
+        if (*a != *b)
+        {
+            return FALSE;
+        }
+        ++a;
+        ++b;
+    }
+    return *a == NULL_CHAR && *b == NULL_CHAR;
 }
 
 void print_syntax_err()
@@ -98,6 +122,12 @@ int check_syntax()
     if (in_multi_comment)
     {
         printf("Unclosed multi-line comment\n");
+        return ERROR;
+    }
+
+    if (in_char)
+    {
+        printf("Unclosed character constant\n");
         return ERROR;
     }
 
@@ -144,6 +174,57 @@ int handle_char(char ch)
             move_to_new_line();
 
         return SUCCESS;
+    }
+
+    if (escaped)
+    {
+        if (in_char && push_char(ch))
+            return ERROR;
+        if (!is_valid_escape(ch))
+        {
+            printf("Invalid escape sequence\n");
+            return ERROR;
+        }
+        escaped = FALSE;
+        non_blank_line = TRUE;
+        return SUCCESS;
+    }
+
+    if (ch == '\\')
+    {
+        if (in_char && push_char(ch))
+            return ERROR;
+        escaped = TRUE;
+        non_blank_line = TRUE;
+        return SUCCESS;
+    }
+
+    if (in_char)
+    {
+        if (ch == '\'')
+        {
+            in_char = FALSE;
+            if (char_buffer_idx == 1)
+            {
+                char_buffer_idx = 0;
+                return SUCCESS;
+            }
+            if (char_buffer_idx < 1)
+            {
+                printf("Empty character constant\n");
+                return ERROR;
+            }
+            if (char_buffer[0] != '\\')
+            {
+                printf("Character constant too long\n");
+                return ERROR;
+            }
+            // must be escape sequence - already tested
+            char_buffer_idx = 0;
+            return SUCCESS;
+        }
+        else
+            return push_char(ch);
     }
 
     if (ch == '\n')
@@ -237,6 +318,12 @@ int handle_char(char ch)
         non_blank_line = TRUE;
         return SUCCESS;
     }
+    else if (ch == '\'')
+    {
+        non_blank_line = TRUE;
+        in_char = TRUE;
+        return SUCCESS;
+    }
 
     non_blank_line = TRUE;
 
@@ -296,28 +383,14 @@ int is_valid_directive()
 {
     directive_buffer[directive_name_idx] = NULL_CHAR;
     size_t num_directives = sizeof(valid_directives) / sizeof(valid_directives[0]);
-    for (size_t i = 0; i < num_directives; i++)
+    for (size_t i = 0; i < num_directives; ++i)
     {
-        if (is_matching_strings(directive_buffer, valid_directives[i]))
+        if (are_matching_strings(directive_buffer, valid_directives[i]))
         {
             return TRUE;
         }
     }
     return FALSE;
-}
-
-int is_matching_strings(const char *a, const char *b)
-{
-    while (*a && *b)
-    {
-        if (*a != *b)
-        {
-            return FALSE;
-        }
-        ++a;
-        ++b;
-    }
-    return *a == NULL_CHAR && *b == NULL_CHAR;
 }
 
 int push_bracket(char ch)
@@ -368,4 +441,28 @@ void print_unclosed_brackets_err()
     printf("Unclosed brackets - ");
     print_brackets_stack();
     printf("\n");
+}
+
+int push_char(char ch)
+{
+    if (char_buffer_idx == MAX_CHAR_LENGTH)
+    {
+        printf("Character constant too long\n");
+        return ERROR;
+    }
+    char_buffer[char_buffer_idx++] = ch;
+    return SUCCESS;
+}
+
+int is_valid_escape(char escape)
+{
+    size_t num_escapes = sizeof(valid_escapes) / sizeof(valid_escapes[0]);
+    for (size_t i = 0; i < num_escapes; ++i)
+    {
+        if (escape == valid_escapes[i])
+        {
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
