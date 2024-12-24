@@ -4,6 +4,7 @@
     done
         unrecognized preprocessor directive
         mismatched or missing bracket
+        unclosed multi-line comment
 
     to do
         unclosed single or double quote
@@ -11,7 +12,6 @@
         invalid character constant
          - empty, multi-char
         invalid escape sequence
-        unclosed multi-line comment
 */
 
 #include <stdio.h>
@@ -39,11 +39,14 @@ char directive_buffer[MAX_DIRECTIVE_NAME_LENGTH + 1];
 int brackets_stack_idx = 0;
 char brackets_stack[MAX_BRACKETS_STACK_LENGTH + 1];
 
+int in_single_comment = FALSE;
+int in_multi_comment = FALSE;
+
 void print_syntax_err();
 int check_syntax();
 int handle_char(char ch);
 int perform_newline_checks();
-void reset_vars();
+void move_to_new_line();
 int push_directive_name_char(char ch);
 void print_directive_name();
 void print_invalid_directive_name_err();
@@ -65,7 +68,7 @@ int main()
         print_syntax_err();
         return ERROR;
     }
-    printf("Checked %d lines. No syntax errors\n", line + 1);
+    printf("Checked %d lines. No syntax errors\n", line);
 }
 
 void print_syntax_err()
@@ -78,6 +81,7 @@ int check_syntax()
     int ch;
     while ((ch = getchar()) != EOF)
     {
+        ++col;
         if (handle_char(ch))
             return ERROR;
     }
@@ -91,22 +95,64 @@ int check_syntax()
         return ERROR;
     }
 
+    if (in_multi_comment)
+    {
+        printf("Unclosed multi-line comment\n");
+        return ERROR;
+    }
+
     return SUCCESS;
 }
 
 int handle_char(char ch)
 {
-    ++col;
+    if (in_single_comment)
+    {
+        if (ch == '\n')
+        {
+            in_single_comment = FALSE;
+            move_to_new_line();
+        }
+        return SUCCESS;
+    }
+
+    if (in_multi_comment)
+    {
+        if (ch == '*')
+        {
+            ch = getchar();
+            if (ch == EOF)
+            {
+                printf("Unclosed multi-line comment\n");
+                return ERROR;
+            }
+
+            ++col;
+
+            if (ch == '\n')
+            {
+                move_to_new_line();
+                return SUCCESS;
+            }
+            if (ch == '/')
+            {
+                in_multi_comment = FALSE;
+                return SUCCESS;
+            }
+        }
+        else if (ch == '\n')
+            move_to_new_line();
+
+        return SUCCESS;
+    }
+
     if (ch == '\n')
     {
         if (perform_newline_checks())
         {
             return ERROR;
         }
-
-        ++line;
-        col = 1;
-        reset_vars();
+        move_to_new_line();
         return SUCCESS;
     }
     else if (ch == ' ' || ch == '\t')
@@ -147,14 +193,47 @@ int handle_char(char ch)
         char expected_bracket = get_opening_bracket(ch);
         if (expected_bracket == ERROR)
             return ERROR;
+
         char opening_bracket = pop_bracket();
         if (opening_bracket == ERROR)
             return ERROR;
+
         if (opening_bracket != expected_bracket)
         {
             printf("Mismatched brackets - %c, %c\n", opening_bracket, ch);
             return ERROR;
         }
+
+        non_blank_line = TRUE;
+        return SUCCESS;
+    }
+    else if (ch == '/')
+    {
+        ch = getchar();
+        if (ch == EOF)
+        {
+            printf("Unexpected EOF\n");
+            return ERROR;
+        }
+        if (ch == '\n')
+        {
+            printf("Unexpected newline\n");
+            return ERROR;
+        }
+
+        ++col;
+
+        if (ch == '/')
+        {
+            in_single_comment = TRUE;
+            return SUCCESS;
+        }
+        if (ch == '*')
+        {
+            in_multi_comment = TRUE;
+            return SUCCESS;
+        }
+
         non_blank_line = TRUE;
         return SUCCESS;
     }
@@ -180,8 +259,10 @@ int perform_newline_checks()
     return SUCCESS;
 }
 
-void reset_vars()
+void move_to_new_line()
 {
+    ++line;
+    col = 1;
     non_blank_line = FALSE;
     directive_line = FALSE;
     directive_name_done = FALSE;
