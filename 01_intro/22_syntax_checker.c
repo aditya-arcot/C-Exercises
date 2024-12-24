@@ -1,16 +1,29 @@
 /*
-    check a C program for syntax errors
+    Check a C program for syntax errors
 
-    done
-        unrecognized preprocessor directive
-        unclosed or mismatched bracket
-        unclosed multi-line comment
-        unclosed string
-        unclosed or invalid character constant
-        invalid escape sequence
+    Purpose:
+        A lightweight syntax checker for C programs that identifies basic errors and provides detailed feedback. 
 
-    to do
-        multi-line character constant or string
+    Errors Detected:
+        - Unrecognized preprocessor directives
+        - Unclosed or mismatched brackets ({}, (), [])
+        - Unclosed multi-line comments
+        - Unclosed string literals ("...")
+        - Unclosed or invalid character literals ('...')
+        - Invalid escape sequences in strings or character literals
+
+    Valid Directives:
+        #define, #include, #if, #ifdef, #ifndef, #else, #elif, #endif, #undef, #pragma
+
+    Notable Features:
+        - Provides detailed error information, including line and column numbers
+        - Ensures correct nesting of brackets
+        - Handles continuation lines (ending with a backslash)
+        - Recognizes single-line and multi-line comments
+
+    Limitations:
+        - Does not handle semantic errors or advanced syntax constructs
+        - Designed for simple C code syntax validation, not for full parsing or compilation
 */
 
 #include <stdio.h>
@@ -24,32 +37,25 @@
 #define MAX_BRACKETS_STACK_LENGTH 1000
 #define MAX_CHAR_LENGTH 2
 
-const char *valid_directives[] = {"define", "include", "if", "ifdef", "ifndef", "else", "elif", "endif", "undef", "pragma"};
-const char valid_escapes[] = {'a', 'b', 'f', 'n', 'r', 't', 'v', '\\', '\'', '"', '?', '0'};
-
+int debug = FALSE;
 int line = 1;
 int col = 1;
-
 int non_blank_line = FALSE;
-
 int directive_line = FALSE;
 int directive_name_done = FALSE;
 int directive_name_idx = 0;
 char directive_buffer[MAX_DIRECTIVE_NAME_LENGTH + 1];
-
+const char *valid_directives[] = {"define", "include", "if", "ifdef", "ifndef", "else", "elif", "endif", "undef", "pragma"};
 int brackets_stack_idx = 0;
 char brackets_stack[MAX_BRACKETS_STACK_LENGTH + 1];
-
 int in_single_comment = FALSE;
 int in_multi_comment = FALSE;
-
 int in_string = FALSE;
-
 int in_char = FALSE;
 int char_buffer_idx = 0;
 char char_buffer[MAX_CHAR_LENGTH + 1];
-
 int escaped = FALSE;
+const char valid_escapes[] = {'a', 'b', 'f', 'n', 'r', 't', 'v', '\\', '\'', '"', '?', '0'};
 
 int are_matching_strings(const char *a, const char *b);
 void print_syntax_err();
@@ -67,6 +73,7 @@ char get_opening_bracket(char closing_bracket);
 void print_brackets_stack();
 void print_unclosed_brackets_err();
 int push_char(char ch);
+int pop_char();
 int is_valid_escape(char escape);
 
 int main()
@@ -135,7 +142,7 @@ int check_syntax()
 
     if (in_char)
     {
-        printf("Unclosed character constant\n");
+        printf("Unclosed character literal\n");
         return ERROR;
     }
 
@@ -144,6 +151,26 @@ int check_syntax()
 
 int handle_char(char ch)
 {
+    if (debug)
+    {
+        if (ch == '\n')
+        {
+            printf("line %-3d col %-3d [newline]\n", line, col);
+        }
+        else if (ch == ' ')
+        {
+            printf("line %-3d col %-3d [space]\n", line, col);
+        }
+        else if (ch == '\t')
+        {
+            printf("line %-3d col %-3d [tab]\n", line, col);
+        }
+        else
+        {
+            printf("line %-3d col %-3d %c\n", line, col, ch);
+        }
+    }
+
     if (in_single_comment)
     {
         if (ch == '\n')
@@ -186,6 +213,14 @@ int handle_char(char ch)
 
     if (escaped)
     {
+        if (ch == '\n')
+        {
+            escaped = FALSE;
+            if (in_char && pop_char())
+                return ERROR;
+            move_to_new_line();
+            return SUCCESS;
+        }
         if (in_char && push_char(ch))
             return ERROR;
         if (!is_valid_escape(ch))
@@ -214,6 +249,11 @@ int handle_char(char ch)
             in_string = FALSE;
             return SUCCESS;
         }
+        if (ch == '\n')
+        {
+            printf("Unclosed string\n");
+            return ERROR;
+        }
         return SUCCESS;
     }
 
@@ -229,20 +269,24 @@ int handle_char(char ch)
             }
             if (char_buffer_idx < 1)
             {
-                printf("Empty character constant\n");
+                printf("Empty character literal\n");
                 return ERROR;
             }
             if (char_buffer[0] != '\\')
             {
-                printf("Character constant too long\n");
+                printf("character literal too long\n");
                 return ERROR;
             }
             // must be escape sequence - already tested
             char_buffer_idx = 0;
             return SUCCESS;
         }
-        else
-            return push_char(ch);
+        if (ch == '\n')
+        {
+            printf("Unclosed character literal\n");
+            return ERROR;
+        }
+        return push_char(ch);
     }
 
     if (ch == '\n')
@@ -471,10 +515,21 @@ int push_char(char ch)
 {
     if (char_buffer_idx == MAX_CHAR_LENGTH)
     {
-        printf("Character constant too long\n");
+        printf("character literal too long\n");
         return ERROR;
     }
     char_buffer[char_buffer_idx++] = ch;
+    return SUCCESS;
+}
+
+int pop_char()
+{
+    if (char_buffer_idx == 0)
+    {
+        printf("No char in the buffer\n");
+        return ERROR;
+    }
+    --char_buffer_idx;
     return SUCCESS;
 }
 
