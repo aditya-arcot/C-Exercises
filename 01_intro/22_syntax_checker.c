@@ -5,11 +5,11 @@
         unrecognized preprocessor directive
         unclosed or mismatched bracket
         unclosed multi-line comment
+        unclosed string
         unclosed or invalid character constant
         invalid escape sequence
 
     to do
-        unclosed string
         multi-line character constant or string
 */
 
@@ -42,6 +42,8 @@ char brackets_stack[MAX_BRACKETS_STACK_LENGTH + 1];
 
 int in_single_comment = FALSE;
 int in_multi_comment = FALSE;
+
+int in_string = FALSE;
 
 int in_char = FALSE;
 int char_buffer_idx = 0;
@@ -125,6 +127,12 @@ int check_syntax()
         return ERROR;
     }
 
+    if (in_string)
+    {
+        printf("Unclosed string\n");
+        return ERROR;
+    }
+
     if (in_char)
     {
         printf("Unclosed character constant\n");
@@ -196,6 +204,16 @@ int handle_char(char ch)
             return ERROR;
         escaped = TRUE;
         non_blank_line = TRUE;
+        return SUCCESS;
+    }
+
+    if (in_string)
+    {
+        if (ch == '"')
+        {
+            in_string = FALSE;
+            return SUCCESS;
+        }
         return SUCCESS;
     }
 
@@ -316,6 +334,12 @@ int handle_char(char ch)
         }
 
         non_blank_line = TRUE;
+        return SUCCESS;
+    }
+    else if (ch == '"')
+    {
+        non_blank_line = TRUE;
+        in_string = TRUE;
         return SUCCESS;
     }
     else if (ch == '\'')
