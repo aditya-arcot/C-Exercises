@@ -5,7 +5,6 @@
 #define TRUE 1
 #define FALSE 0
 
-int prev_ch;
 int ch = -1;
 
 int in_string = FALSE;
@@ -18,12 +17,10 @@ int handle_char();
 
 int main()
 {
-    while (TRUE)
+    while ((ch = getchar()) != EOF)
     {
-        prev_ch = ch;
-        ch = getchar();
-        if (ch == EOF) break;
-        if (handle_char()) break;
+        if (handle_char())
+            break;
     }
 }
 
@@ -41,10 +38,11 @@ int handle_char()
 
     if (in_multi_comment)
     {
-        if (ch == '*') {
-            prev_ch = ch;
+        if (ch == '*')
+        {
             ch = getchar();
-            if (ch == EOF) return 1;
+            if (ch == EOF)
+                return 1;
 
             if (ch == '/')
             {
@@ -55,44 +53,52 @@ int handle_char()
         return 0;
     }
 
-    if (escaped) {
+    if (escaped)
+    {
         escaped = FALSE;
         putchar(ch);
         return 0;
     }
 
-    if (ch == '\\') {
+    if (ch == '\\')
+    {
         escaped = TRUE;
         putchar(ch);
         return 0;
     }
 
-    if (ch == '"' && !escaped) {
+    if (ch == '"' && !escaped)
+    {
         in_string = !in_string;
         putchar(ch);
         return 0;
     }
-    
-    if (in_string) {
+
+    if (in_string)
+    {
         putchar(ch);
         return 0;
     }
 
-    if (ch == '\'' && !escaped) {
+    if (ch == '\'' && !escaped)
+    {
         in_char = !in_char;
         putchar(ch);
         return 0;
     }
 
-    if (in_char) {
+    if (in_char)
+    {
         putchar(ch);
         return 0;
     }
 
-    if (ch == '/') {
-        prev_ch = ch;
+    if (ch == '/')
+    {
+        int prev_ch = ch;
         ch = getchar();
-        if (ch == EOF) return 1;
+        if (ch == EOF)
+            return 1;
 
         if (ch == '/')
         {
