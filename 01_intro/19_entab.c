@@ -6,7 +6,7 @@
 
 void print_spaces(int n);
 
-int main()
+int main(void)
 {
     int ch, col, spaces;
     col = spaces = 0;

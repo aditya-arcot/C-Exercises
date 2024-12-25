@@ -5,7 +5,7 @@
 #define MINCHAR 33
 #define MAXCHAR 126
 
-int main()
+int main(void)
 {
     int ch, max_count = 0;
     int counts[MAXCHAR - MINCHAR + 1];

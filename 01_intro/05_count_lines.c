@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-int main()
+int main(void)
 {
     int ch, lines = 0;
     while ((ch = getchar()) != EOF)

@@ -6,7 +6,7 @@
 #define FALSE 0
 #define MAXLEN 10
 
-int main()
+int main(void)
 {
     int ch, len = 0, in_word = FALSE;
     int counts[MAXLEN];

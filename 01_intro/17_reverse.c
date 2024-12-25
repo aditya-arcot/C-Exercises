@@ -8,7 +8,7 @@
 int get_line(char line[], int max_line_len);
 void reverse(char line[], int len);
 
-int main()
+int main(void)
 {
     int len = 0;
     char line[MAX_LINE + 1];

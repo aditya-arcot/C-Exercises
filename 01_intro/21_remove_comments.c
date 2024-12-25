@@ -13,9 +13,9 @@ int in_single_comment = FALSE;
 int in_multi_comment = FALSE;
 int escaped = FALSE;
 
-int handle_char();
+int handle_char(void);
 
-int main()
+int main(void)
 {
     while ((ch = getchar()) != EOF)
     {
@@ -24,7 +24,7 @@ int main()
     }
 }
 
-int handle_char()
+int handle_char(void)
 {
     if (in_single_comment)
     {

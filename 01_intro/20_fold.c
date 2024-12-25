@@ -11,15 +11,15 @@ int last_whitespace = -1;
 char buffer[COLUMN_WIDTH + 1];
 
 int is_whitespace(char ch) { return ch == ' ' || ch == '\t'; }
-void flush_and_reset_buffer();
+void flush_and_reset_buffer(void);
 void print_buffer(int n);
-void shift_buffer_after_last_whitespace();
-void move_to_next_line();
+void shift_buffer_after_last_whitespace(void);
+void move_to_next_line(void);
 void handle_char(char ch);
-void handle_newline();
+void handle_newline(void);
 void handle_whitespace(char ch);
 
-int main()
+int main(void)
 {
     int ch;
     buffer[COLUMN_WIDTH] = NULL_CHAR;
@@ -36,7 +36,7 @@ int main()
     }
 }
 
-void flush_and_reset_buffer()
+void flush_and_reset_buffer(void)
 {
     print_buffer(buffer_idx);
     buffer_idx = 0;
@@ -49,7 +49,7 @@ void print_buffer(int n)
         putchar(buffer[i]);
 }
 
-void shift_buffer_after_last_whitespace()
+void shift_buffer_after_last_whitespace(void)
 {
     int remaining = buffer_idx - (last_whitespace + 1);
     for (int i = 0; i < remaining; ++i)
@@ -59,7 +59,7 @@ void shift_buffer_after_last_whitespace()
     buffer_idx = remaining;
 }
 
-void move_to_next_line()
+void move_to_next_line(void)
 {
     putchar('\n');
     col = 0;
@@ -113,7 +113,7 @@ void handle_char(char ch)
     ++buffer_idx;
 }
 
-void handle_newline()
+void handle_newline(void)
 {
     flush_and_reset_buffer();
     move_to_next_line();

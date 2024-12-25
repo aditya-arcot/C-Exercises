@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-int main()
+int main(void)
 {
     int ch, blanks, tabs, lines;
     blanks = tabs = lines = 0;

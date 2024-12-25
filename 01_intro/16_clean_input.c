@@ -14,7 +14,7 @@
 int whitespace(char ch) { return ch == ' ' || ch == '\t'; }
 int newline(char ch) { return ch == '\n'; }
 
-int main()
+int main(void)
 {
     int ch;
     int ch_printed, in_whitespace;

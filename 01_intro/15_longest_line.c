@@ -11,7 +11,7 @@ char longest_line[MAX_LINE_PREVIEW + 1];
 int get_line(char line[]);
 void copy(char from[], char to[]);
 
-int main()
+int main(void)
 {
     int len = 0;
     char line[MAX_LINE_PREVIEW + 1];

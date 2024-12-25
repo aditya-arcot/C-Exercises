@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-int main()
+int main(void)
 {
     int c;
     printf("Enter characters (end using Ctrl+D):\n");

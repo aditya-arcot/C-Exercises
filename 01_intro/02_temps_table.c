@@ -12,7 +12,7 @@
 
 double to_celsius(int fahr);
 
-int main()
+int main(void)
 {
     int fahr;
     // float celsius;

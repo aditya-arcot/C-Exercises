@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-int main()
+int main(void)
 {
     int ch, n_digit[10], n_white, n_other;
 

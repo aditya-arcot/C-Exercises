@@ -58,25 +58,25 @@ int escaped = FALSE;
 const char valid_escapes[] = {'a', 'b', 'f', 'n', 'r', 't', 'v', '\\', '\'', '"', '?', '0'};
 
 int are_matching_strings(const char *a, const char *b);
-void print_syntax_err();
-int check_syntax();
+void print_syntax_err(void);
+int check_syntax(void);
 int handle_char(char ch);
-int perform_newline_checks();
-void move_to_new_line();
+int perform_newline_checks(void);
+void move_to_new_line(void);
 int push_directive_name_char(char ch);
-void print_directive_name();
-void print_invalid_directive_name_err();
-int is_valid_directive();
+void print_directive_name(void);
+void print_invalid_directive_name_err(void);
+int is_valid_directive(void);
 int push_bracket(char ch);
-char pop_bracket();
+char pop_bracket(void);
 char get_opening_bracket(char closing_bracket);
-void print_brackets_stack();
-void print_unclosed_brackets_err();
+void print_brackets_stack(void);
+void print_unclosed_brackets_err(void);
 int push_char(char ch);
-int pop_char();
+int pop_char(void);
 int is_valid_escape(char escape);
 
-int main()
+int main(void)
 {
     directive_buffer[MAX_DIRECTIVE_NAME_LENGTH] = NULL_CHAR;
     brackets_stack[MAX_BRACKETS_STACK_LENGTH] = NULL_CHAR;
@@ -104,12 +104,12 @@ int are_matching_strings(const char *a, const char *b)
     return *a == NULL_CHAR && *b == NULL_CHAR;
 }
 
-void print_syntax_err()
+void print_syntax_err(void)
 {
     printf("Syntax error - line %d, col %d\n", line, col);
 }
 
-int check_syntax()
+int check_syntax(void)
 {
     int ch;
     while ((ch = getchar()) != EOF)
@@ -404,7 +404,7 @@ int handle_char(char ch)
     return SUCCESS;
 }
 
-int perform_newline_checks()
+int perform_newline_checks(void)
 {
     if (directive_line && !directive_name_done && !is_valid_directive())
     {
@@ -414,7 +414,7 @@ int perform_newline_checks()
     return SUCCESS;
 }
 
-void move_to_new_line()
+void move_to_new_line(void)
 {
     ++line;
     col = 1;
@@ -434,20 +434,20 @@ int push_directive_name_char(char ch)
     return SUCCESS;
 }
 
-void print_directive_name()
+void print_directive_name(void)
 {
     for (int i = 0; i < directive_name_idx; ++i)
         printf("%c", directive_buffer[i]);
 }
 
-void print_invalid_directive_name_err()
+void print_invalid_directive_name_err(void)
 {
     printf("Invalid directive name - ");
     print_directive_name();
     printf("\n");
 }
 
-int is_valid_directive()
+int is_valid_directive(void)
 {
     directive_buffer[directive_name_idx] = NULL_CHAR;
     size_t num_directives = sizeof(valid_directives) / sizeof(valid_directives[0]);
@@ -472,7 +472,7 @@ int push_bracket(char ch)
     return SUCCESS;
 }
 
-char pop_bracket()
+char pop_bracket(void)
 {
     if (brackets_stack_idx == 0)
     {
@@ -494,7 +494,7 @@ char get_opening_bracket(char closing_bracket)
     return ERROR;
 }
 
-void print_brackets_stack()
+void print_brackets_stack(void)
 {
     for (int i = 0; i < brackets_stack_idx; ++i)
     {
@@ -504,7 +504,7 @@ void print_brackets_stack()
     }
 }
 
-void print_unclosed_brackets_err()
+void print_unclosed_brackets_err(void)
 {
     printf("Unclosed brackets - ");
     print_brackets_stack();
@@ -522,7 +522,7 @@ int push_char(char ch)
     return SUCCESS;
 }
 
-int pop_char()
+int pop_char(void)
 {
     if (char_buffer_idx == 0)
     {

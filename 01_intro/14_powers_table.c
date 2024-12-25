@@ -5,7 +5,7 @@
 // function prototype
 double power(int base, int exp);
 
-int main()
+int main(void)
 {
     int range = 3, col_width = 8;
 
