@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug C",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}.out",
+            "cwd": "${fileDirname}",
+            "preLaunchTask": "Compile C Program",
+            "postDebugTask": "Cleanup Files"
+        }
+    ]
+}
