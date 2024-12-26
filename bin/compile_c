@@ -41,7 +41,7 @@ FILENAME="$1"
 OUTFILE="${FILENAME%.*}.out"
 
 echo "Compiling $FILENAME to $OUTFILE"
-if cc -Werror -o "$OUTFILE" "$FILENAME"; then
+if cc -Weverything -Wno-poison-system-directories -std=c17 -o "$OUTFILE" "$FILENAME"; then
     echo "Compilation successful."
     if $EXECUTE; then
         echo "Executing $OUTFILE:"
@@ -51,7 +51,7 @@ if cc -Werror -o "$OUTFILE" "$FILENAME"; then
         echo "Execution finished. Removing $OUTFILE"
         rm "$OUTFILE"
     else 
-        echo "Execution skipped."
+        echo "Execution skipped. Preserving $OUTFILE"
     fi
 else
     echo "Compilation failed."

@@ -2,7 +2,7 @@
     Check a C program for syntax errors
 
     Purpose:
-        A lightweight syntax checker for C programs that identifies basic errors and provides detailed feedback. 
+        A lightweight syntax checker for C programs that identifies basic errors and provides detailed feedback.
 
     Errors Detected:
         - Unrecognized preprocessor directives

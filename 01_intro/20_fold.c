@@ -68,10 +68,16 @@ void move_to_next_line(void)
 void handle_char(char ch)
 {
     if (ch == '\n')
-        return handle_newline();
+    {
+        handle_newline();
+        return;
+    }
 
     if (is_whitespace(ch))
-        return handle_whitespace(ch);
+    {
+        handle_whitespace(ch);
+        return;
+    }
 
     // buffer previously printed
     if (col > 0)
@@ -124,7 +130,8 @@ void handle_whitespace(char ch)
     // buffer previously printed
     if (col > 0)
     {
-        return move_to_next_line();
+        move_to_next_line();
+        return;
     }
 
     // nothing printed, empty buffer
@@ -138,7 +145,8 @@ void handle_whitespace(char ch)
     if (buffer_idx == COLUMN_WIDTH)
     {
         flush_and_reset_buffer();
-        return move_to_next_line();
+        move_to_next_line();
+        return;
     }
 
     // partial buffer
