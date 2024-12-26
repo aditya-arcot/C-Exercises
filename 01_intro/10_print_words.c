@@ -23,4 +23,6 @@ int main(void)
             in_word = TRUE;
         }
     }
+
+    putchar('\n');
 }
