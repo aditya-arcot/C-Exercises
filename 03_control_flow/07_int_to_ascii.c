@@ -1,4 +1,4 @@
-// convert integer to ASCII integer string
+// convert integer to left-padded ASCII integer string
 
 #include <stdio.h>
 #include <stdbool.h>
