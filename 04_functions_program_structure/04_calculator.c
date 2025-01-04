@@ -22,7 +22,6 @@
 #define MAX_COMMAND_LENGTH 5
 #define MAX_FUNCTION_LENGTH 5
 #define MAX_STACK_DEPTH 1000
-#define ERROR 1
 
 static bool debug = false;
 static int stack_pointer = 0;
@@ -493,8 +492,8 @@ void push(double num)
         printf("Pushing %g to stack...\n", num);
     if (stack_pointer == MAX_STACK_DEPTH)
     {
-        printf("Error: stack overflow\n");
-        exit(ERROR);
+        printf("Error: stack overflow. Ignoring value\n");
+        return;
     }
     nums_stack[stack_pointer++] = num;
     if (debug)
@@ -511,8 +510,8 @@ double pop(void)
         printf("Popping from stack...\n");
     if (stack_pointer == 0)
     {
-        printf("Error: stack underflow\n");
-        exit(ERROR);
+        printf("Error: stack underflow. Returning 0\n");
+        return 0;
     }
     num = nums_stack[--stack_pointer];
     if (debug)
@@ -530,8 +529,8 @@ double peek(void)
         printf("Peeking from stack...\n");
     if (stack_pointer == 0)
     {
-        printf("Error: stack underflow\n");
-        exit(ERROR);
+        printf("Error: stack underflow. Returning 0\n");
+        return 0;
     }
     num = nums_stack[stack_pointer - 1];
     if (debug)
