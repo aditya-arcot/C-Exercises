@@ -1,23 +1,9 @@
 /*
-    RPN Calculator
-        spaces between arguments not required, but recommended for clarity
-        numbers
-            optional negative sign
-            optional decimal portion
-            max 15 characters (incl negative sign and decimal point)
-        operations
-            + - * ÷ %
-        commands (starting with !)
-            h / help
-            c / clear
-            pr / print
-            pop
-            peek
-            d / dup
-            s / swap
+    Reverse Polish Notation Calculator
+
+    See print_help_msg() for usage and supported input.
 
     todo
-        math functions - sin, exp, pow
         variables
         last printed variable
 */
@@ -27,12 +13,14 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <float.h>
+#include <math.h>
 
 #define NULL_CHAR '\0'
 #define NEWLINE_CHAR '\n'
 #define MAX_LINE_LENGTH 1000
 #define MAX_NUM_LENGTH 15
 #define MAX_COMMAND_LENGTH 5
+#define MAX_FUNCTION_LENGTH 5
 #define MAX_STACK_DEPTH 1000
 #define ERROR 1
 
@@ -46,6 +34,7 @@ bool is_number(char line[], int idx);
 int handle_number(char line[], int idx);
 int read_number(char line[], int idx, char num[]);
 void handle_operator(char op);
+int handle_function(char line[], int idx);
 int handle_command(char line[], int idx);
 void print_use_help_msg(void);
 void print_help_msg(void);
@@ -133,6 +122,8 @@ void handle_line(char line[], int len)
             handle_operator((char)ch);
         else if (ch == '!')
             idx = handle_command(line, idx + 1); // skip !
+        else if (ch == '@')
+            idx = handle_function(line, idx + 1); // skip @
         else
         {
             printf("Warning: skipping unknown argument: %c\n", ch);
@@ -248,24 +239,108 @@ void handle_operator(char op)
         push(pop() * pop());
         break;
     case '/':
-        temp = pop();
-        if (dbl_abs(temp) < DBL_EPSILON)
+        if (dbl_abs(peek()) < DBL_EPSILON)
         {
-            printf("Error: cannot divide by 0\n");
-            exit(ERROR);
+            printf("Error: cannot divide by 0. Ignoring operation\n");
+            return;
         }
+        temp = pop();
         push(pop() / temp);
         break;
     case '%':
-        temp = pop();
-        if (dbl_abs(temp) < DBL_EPSILON)
+        if (dbl_abs(peek()) < DBL_EPSILON)
         {
-            printf("Error: cannot divide by 0\n");
-            exit(ERROR);
+            printf("Error: cannot divide by 0. Ignoring operation\n");
+            return;
         }
+        temp = pop();
         push(dbl_mod(pop(), temp));
         break;
     }
+}
+
+// return last function character idx
+int handle_function(char line[], int idx)
+{
+    int ch, i = 0;
+    bool overflow = false;
+    char function[MAX_FUNCTION_LENGTH + 1];
+
+    while (isalpha(ch = line[idx]))
+    {
+        idx++;
+        if (i < MAX_FUNCTION_LENGTH)
+            function[i++] = (char)tolower(ch);
+        else
+            overflow = true;
+    }
+    function[i] = NULL_CHAR;
+
+    if (overflow)
+    {
+        printf("Warning: skipping unknown function: @%s...\n", function);
+        print_use_help_msg();
+        return idx - 1;
+    }
+
+    if (debug)
+        printf("Function: %s\n", function);
+
+    if (str_cmp(function, "floor"))
+        push(floor(pop()));
+    else if (str_cmp(function, "ceil"))
+        push(ceil(pop()));
+    else if (str_cmp(function, "round"))
+        push(round(pop()));
+    else if (str_cmp(function, "trunc"))
+        push(trunc(pop()));
+    else if (str_cmp(function, "abs"))
+        push(dbl_abs(pop()));
+    else if (str_cmp(function, "rand"))
+        push(rand() / (double)RAND_MAX);
+    else if (str_cmp(function, "min"))
+        push(fmin(pop(), pop()));
+    else if (str_cmp(function, "max"))
+        push(fmax(pop(), pop()));
+    else if (str_cmp(function, "sqrt"))
+    {
+        if (peek() < 0)
+        {
+            printf("Error: cannot take square root of negative number. Ignoring operation\n");
+            return idx - 1;
+        }
+        push(sqrt(pop()));
+    }
+    else if (str_cmp(function, "pow"))
+    {
+        double y = pop();
+        push(pow(pop(), y));
+    }
+    else if (str_cmp(function, "exp"))
+        push(exp(pop()));
+    else if (str_cmp(function, "log"))
+        push(log10(pop()));
+    else if (str_cmp(function, "ln"))
+        push(log(pop()));
+    else if (str_cmp(function, "sin"))
+        push(sin(pop()));
+    else if (str_cmp(function, "cos"))
+        push(cos(pop()));
+    else if (str_cmp(function, "tan"))
+        push(tan(pop()));
+    else if (str_cmp(function, "asin"))
+        push(asin(pop()));
+    else if (str_cmp(function, "acos"))
+        push(acos(pop()));
+    else if (str_cmp(function, "atan"))
+        push(atan(pop()));
+    else
+    {
+        printf("Warning: skipping unknown function: @%s\n", function);
+        print_use_help_msg();
+    }
+
+    return idx - 1;
 }
 
 // return last command character idx
@@ -280,9 +355,7 @@ int handle_command(char line[], int idx)
     {
         idx++;
         if (i < MAX_COMMAND_LENGTH)
-        {
             command[i++] = (char)tolower(ch);
-        }
         else
             overflow = true;
     }
@@ -290,10 +363,13 @@ int handle_command(char line[], int idx)
 
     if (overflow)
     {
-        printf("Warning: skipping unknown input command: !%s...\n", command);
+        printf("Warning: skipping unknown command: !%s...\n", command);
         print_use_help_msg();
         return idx - 1;
     }
+
+    if (debug)
+        printf("Command: %s\n", command);
 
     if (str_cmp(command, "h") || str_cmp(command, "help"))
         print_help_msg();
@@ -316,7 +392,7 @@ int handle_command(char line[], int idx)
     }
     else
     {
-        printf("Warning: skipping unknown input command: !%s\n", command);
+        printf("Warning: skipping unknown command: !%s\n", command);
         print_use_help_msg();
     }
 
@@ -331,22 +407,60 @@ void print_use_help_msg(void)
 void print_help_msg(void)
 {
     printf(
-        "RPN Calculator\n"
-        "    spaces between arguments not required, but recommended for clarity\n"
-        "    numbers\n"
-        "        optional negative sign\n"
-        "        optional decimal portion\n"
-        "        max 15 characters (incl negative sign and decimal point)\n"
-        "    operations\n"
-        "        + - * ÷ %%\n"
-        "    commands (starting with !)\n"
-        "        h / help\n"
-        "        c / clear\n"
-        "        pr / print\n"
-        "        pop\n"
-        "        peek\n"
-        "        d / dup\n"
-        "        s / swap\n");
+        "Reverse Polish Notation Calculator\n"
+        "\n"
+        "Usage:\n"
+        "    Enter numbers, operators, functions, or commands to manipulate the stack.\n"
+        "    Each line can contain a maximum of 1000 characters.\n"
+        "    Spaces between arguments are optional but recommended for clarity.\n"
+        "    Trignometric functions use units of radians.\n"
+        "\n"
+        "Supported Input:\n"
+        "    Numbers:\n"
+        "        Optional negative sign\n"
+        "        Optional decimal portion\n"
+        "        Maximum length: 15 characters (including '-' and '.')\n"
+        "\n"
+        "    Operators:\n"
+        "        +   Addition\n"
+        "        -   Subtraction\n"
+        "        *   Multiplication\n"
+        "        /   Division\n"
+        "        %%   Modulus\n"
+        "\n"
+        "    Functions (start with '@'):\n"
+        "        @floor  Floor\n"
+        "        @ceil   Ceiling\n"
+        "        @round  Round\n"
+        "        @trunc  Truncate\n"
+        "        @abs    Absolute Value\n"
+        "        @rand   Random Number Between 0 and 1\n"
+        "        @min    Minimum of x and y\n"
+        "        @max    Maximum of x and y\n"
+        "        @sqrt   Square Root\n"
+        "        @pow    Power (x^y)\n"
+        "        @exp    Exponential (e^x)\n"
+        "        @log    Base-10 Logarithm\n"
+        "        @ln     Natural Logarithm\n"
+        "        @sin    Sine\n"
+        "        @cos    Cosine\n"
+        "        @tan    Tangent\n"
+        "        @asin   Inverse Sine\n"
+        "        @acos   Inverse Cosine\n"
+        "        @atan   Inverse Tangent\n"
+        "\n"
+        "    Commands (start with '!'):\n"
+        "        !h or !help     Show this help message.\n"
+        "        !c or !clear    Clear the stack.\n"
+        "        !pr or !print   Display the current stack.\n"
+        "        !pop            Remove and display the top stack element.\n"
+        "        !peek           Display the top stack element without removing it.\n"
+        "        !d or !dup      Duplicate the top stack element.\n"
+        "        !s or !swap     Swap the top two stack elements.\n"
+        "\n"
+        "Example:\n"
+        "    Input: 3 4 + 5 * !pr\n"
+        "    Output: Stack: 35);\n");
 }
 
 double dbl_abs(double num)
