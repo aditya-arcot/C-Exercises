@@ -2,10 +2,7 @@
     Reverse Polish Notation Calculator
 
     See print_help_msg() for usage and supported input.
-
-    todo
-        variables
-        last printed variable
+    TODO - variables (require knowledge of structs)
 */
 
 #include <stdio.h>
@@ -20,6 +17,7 @@
 #define MAX_LINE_LENGTH 1000
 #define MAX_NUM_LENGTH 15
 #define MAX_CONSTANT_LENGTH 2
+// #define MAX_VARIABLE_LENGTH 10
 #define MAX_COMMAND_LENGTH 5
 #define MAX_FUNCTION_LENGTH 5
 #define MAX_STACK_DEPTH 1000
@@ -34,6 +32,7 @@ bool is_number(char line[], int idx);
 int handle_number(char line[], int idx);
 int read_number(char line[], int idx, char num[]);
 int handle_constant(char line[], int idx);
+// int handle_variable(char line[], int idx);
 void handle_operator(char op);
 int handle_function(char line[], int idx);
 int handle_command(char line[], int idx);
@@ -120,13 +119,15 @@ void handle_line(char line[], int len)
         if (is_number(line, idx))
             idx = handle_number(line, idx);
         else if (ch == '#')
-            idx = handle_constant(line, idx + 1); // skip #
+            idx = handle_constant(line, idx + 1);
+        // else if (ch == '$')
+        //     idx = handle_variable(line, idx + 1);
         else if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '%')
             handle_operator((char)ch);
         else if (ch == '!')
-            idx = handle_command(line, idx + 1); // skip !
+            idx = handle_command(line, idx + 1);
         else if (ch == '@')
-            idx = handle_function(line, idx + 1); // skip @
+            idx = handle_function(line, idx + 1);
         else
         {
             printf("Warning: skipping unknown argument: %c\n", ch);
@@ -261,6 +262,45 @@ int handle_constant(char line[], int idx)
 
     return idx - 1;
 }
+
+// int handle_variable(char line[], int idx)
+// {
+//     int ch, i = 0;
+//     bool assignment = false, overflow = false;
+//     char variable[MAX_VARIABLE_LENGTH + 1];
+
+//     if ((ch = line[idx]) == '=')
+//     {
+//         idx++;
+//         assignment = true;
+//     }
+
+//     while (isalpha(ch = line[idx]))
+//     {
+//         idx++;
+//         if (i < MAX_VARIABLE_LENGTH)
+//             variable[i++] = (char)tolower(ch);
+//         else
+//             overflow = true;
+//     }
+//     variable[i] = NULL_CHAR;
+
+//     if (overflow)
+//         printf("Warning: variable name is too long. Using first %d characters - %s\n", MAX_VARIABLE_LENGTH, variable);
+
+//     if (debug)
+//         printf("Variable: %s\n", variable);
+
+//     if (assignment)
+//         assign_variable(variable, pop());
+//     else
+//         if (variable_exists(variable))
+//             push(get_variable_value(variable));
+//         else
+//             printf("Warning: unknown variable: %s. Ignoring usage\n", variable);
+
+//     return idx - 1;
+// }
 
 void handle_operator(char op)
 {
@@ -454,6 +494,7 @@ void print_help_msg(void)
         "\n"
         "Usage:\n"
         "    Enter numbers, constants, operators, functions, or commands to manipulate the stack.\n"
+        // "    Enter numbers, constants, variables, operators, functions, or commands to manipulate the stack.\n"
         "    Each line can contain a maximum of 1000 characters.\n"
         "    Spaces between arguments are optional but recommended for clarity.\n"
         "    Trignometric functions use units of radians.\n"
@@ -465,8 +506,15 @@ void print_help_msg(void)
         "        Maximum length: 15 characters (including '-' and '.')\n"
         "\n"
         "    Constants (start with '#'):\n"
-        "        #e   Euler's Number (2.71828)\n"
-        "        #pi  Pi (3.14159)\n"
+        "        #e     Euler's Number (2.71828)\n"
+        "        #pi    Pi (3.14159)\n"
+        // "\n"
+        // "    Variables (start with '$'):\n"
+        // "        Case insensitive\n"
+        // "        Allowed characters: a-z, A-Z\n"
+        // "        Maximum length: 10 characters (excluding '$')\n"
+        // "        $=var1      Pop the top stack value and assign it to a variable var1.\n"
+        // "        $var1       Push the value of variable var1 to the stack.\n"
         "\n"
         "    Operators:\n"
         "        +   Addition\n"
@@ -500,10 +548,10 @@ void print_help_msg(void)
         "        !h or !help     Show this help message.\n"
         "        !c or !clear    Clear the stack.\n"
         "        !pr or !print   Display the current stack.\n"
-        "        !pop            Remove and display the top stack element.\n"
-        "        !peek           Display the top stack element without removing it.\n"
-        "        !d or !dup      Duplicate the top stack element.\n"
-        "        !s or !swap     Swap the top two stack elements.\n"
+        "        !pop            Remove and display the top stack value.\n"
+        "        !peek           Display the top stack value without removing it.\n"
+        "        !d or !dup      Duplicate the top stack value.\n"
+        "        !s or !swap     Swap the top two stack values.\n"
         "\n"
         "Example:\n"
         "    Input: 3 4 + 5 * !pr\n"
