@@ -19,6 +19,7 @@
 #define NEWLINE_CHAR '\n'
 #define MAX_LINE_LENGTH 1000
 #define MAX_NUM_LENGTH 15
+#define MAX_CONSTANT_LENGTH 2
 #define MAX_COMMAND_LENGTH 5
 #define MAX_FUNCTION_LENGTH 5
 #define MAX_STACK_DEPTH 1000
@@ -32,6 +33,7 @@ void handle_line(char line[], int len);
 bool is_number(char line[], int idx);
 int handle_number(char line[], int idx);
 int read_number(char line[], int idx, char num[]);
+int handle_constant(char line[], int idx);
 void handle_operator(char op);
 int handle_function(char line[], int idx);
 int handle_command(char line[], int idx);
@@ -117,6 +119,8 @@ void handle_line(char line[], int len)
 
         if (is_number(line, idx))
             idx = handle_number(line, idx);
+        else if (ch == '#')
+            idx = handle_constant(line, idx + 1); // skip #
         else if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '%')
             handle_operator((char)ch);
         else if (ch == '!')
@@ -216,6 +220,46 @@ int read_number(char line[], int idx, char num[])
         printf("Warning: input number was truncated to %s\n", num);
 
     return idx - 1; // last number idx
+}
+
+// return last constant character idx
+int handle_constant(char line[], int idx)
+{
+    int ch, i = 0;
+    bool overflow = false;
+    char constant[MAX_CONSTANT_LENGTH + 1];
+
+    while (isalpha(ch = line[idx]))
+    {
+        idx++;
+        if (i < MAX_CONSTANT_LENGTH)
+            constant[i++] = (char)tolower(ch);
+        else
+            overflow = true;
+    }
+    constant[i] = NULL_CHAR;
+
+    if (overflow)
+    {
+        printf("Warning: skipping unknown constant: #%s...\n", constant);
+        print_use_help_msg();
+        return idx - 1;
+    }
+
+    if (debug)
+        printf("Constant: %s\n", constant);
+
+    if (str_cmp(constant, "e"))
+        push(M_E);
+    else if (str_cmp(constant, "pi"))
+        push(M_PI);
+    else
+    {
+        printf("Warning: skipping unknown constant: #%s\n", constant);
+        print_use_help_msg();
+    }
+
+    return idx - 1;
 }
 
 void handle_operator(char op)
@@ -409,7 +453,7 @@ void print_help_msg(void)
         "Reverse Polish Notation Calculator\n"
         "\n"
         "Usage:\n"
-        "    Enter numbers, operators, functions, or commands to manipulate the stack.\n"
+        "    Enter numbers, constants, operators, functions, or commands to manipulate the stack.\n"
         "    Each line can contain a maximum of 1000 characters.\n"
         "    Spaces between arguments are optional but recommended for clarity.\n"
         "    Trignometric functions use units of radians.\n"
@@ -419,6 +463,10 @@ void print_help_msg(void)
         "        Optional negative sign\n"
         "        Optional decimal portion\n"
         "        Maximum length: 15 characters (including '-' and '.')\n"
+        "\n"
+        "    Constants (start with '#'):\n"
+        "        #e   Euler's Number (2.71828)\n"
+        "        #pi  Pi (3.14159)\n"
         "\n"
         "    Operators:\n"
         "        +   Addition\n"
