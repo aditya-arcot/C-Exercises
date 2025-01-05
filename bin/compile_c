@@ -1,7 +1,7 @@
 #!/bin/bash
 
 show_help() {
-    echo "Usage: compile_c [options] file_name.c"
+    echo "Usage: compile_c [options] file1.c [file2.c ... fileN.c]"
     echo ""
     echo "Options:"
     echo "  -n, --no-execute    Don't execute the compiled program"
@@ -31,17 +31,33 @@ while [[ "$1" == -* ]]; do
     shift
 done
 
-if [ "$#" -ne 1 ] || [[ ! "$1" =~ \.c$ ]]; then
-    echo "Invalid file name."
+if [ "$#" -lt 1 ]; then
+    echo "No files provided."
     show_help
     exit 1
 fi
 
-FILENAME="$1"
-OUTFILE="${FILENAME%.*}.out"
+C_FILES=()
+for arg in "$@"; do
+    if [[ "$arg" =~ \.c$ ]]; then
+        C_FILES+=("$arg")
+    else
+        echo "Invalid file name: $arg"
+        show_help
+        exit 1
+    fi
+done
 
-echo "Compiling $FILENAME to $OUTFILE"
-if cc -Weverything -Wno-poison-system-directories -std=c17 -o "$OUTFILE" "$FILENAME"; then
+if [ "${#C_FILES[@]}" -eq 0 ]; then
+    echo "No valid .c files provided."
+    show_help
+    exit 1
+fi
+
+OUTFILE="program.out"
+
+echo "Compiling files: ${C_FILES[*]} to $OUTFILE"
+if cc -Weverything -Wno-poison-system-directories -std=c17 -o "$OUTFILE" "${C_FILES[@]}"; then
     echo "Compilation successful."
     if $EXECUTE; then
         echo "Executing $OUTFILE:"
@@ -50,7 +66,7 @@ if cc -Weverything -Wno-poison-system-directories -std=c17 -o "$OUTFILE" "$FILEN
         separator
         echo "Execution finished. Removing $OUTFILE"
         rm "$OUTFILE"
-    else 
+    else
         echo "Execution skipped. Preserving $OUTFILE"
     fi
 else
