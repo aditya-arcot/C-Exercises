@@ -11,49 +11,29 @@
 #include <stdlib.h>
 #include <float.h>
 #include <math.h>
+#include "calc.h"
 
-#define NULL_CHAR '\0'
-#define NEWLINE_CHAR '\n'
-#define MAX_LINE_LENGTH 1000
-#define MAX_NUM_LENGTH 15
-#define MAX_CONSTANT_LENGTH 2
-// #define MAX_VARIABLE_LENGTH 10
-#define MAX_COMMAND_LENGTH 5
-#define MAX_FUNCTION_LENGTH 5
-#define MAX_STACK_DEPTH 1000
+bool debug = false;
 
-static bool debug = false;
-static int stack_pointer = 0;
-static double nums_stack[MAX_STACK_DEPTH + 1];
-
-int get_line(char line[], int max);
-void handle_line(char line[], int len);
-bool is_number(char line[], int idx);
-int handle_number(char line[], int idx);
-int read_number(char line[], int idx, char num[]);
-int handle_constant(char line[], int idx);
-// int handle_variable(char line[], int idx);
-void handle_operator(char op);
-int handle_function(char line[], int idx);
-int handle_command(char line[], int idx);
-void print_use_help_msg(void);
-void print_help_msg(void);
-
-double dbl_abs(double num);
-double dbl_mod(double x, double y);
-bool str_cmp(const char *s1, const char *s2);
-
-void push(double num);
-double pop(void);
-double peek(void);
-void clear_stack(void);
-void print_stack(void);
+static int get_line(char line[], int max);
+static void handle_line(char line[], int len);
+static bool is_number(char line[], int idx);
+static int handle_number(char line[], int idx);
+static int read_number(char line[], int idx, char num[]);
+static int handle_constant(char line[], int idx);
+// static int handle_variable(char line[], int idx);
+static void handle_operator(char op);
+static int handle_function(char line[], int idx);
+static int handle_command(char line[], int idx);
+static void print_use_help_msg(void);
+static void print_help_msg(void);
 
 int main(void)
 {
     int len;
     char line[MAX_LINE_LENGTH + 1];
-    nums_stack[0] = NULL_CHAR;
+
+    init_stack();
 
     print_help_msg();
     printf("\n\n");
@@ -556,106 +536,4 @@ void print_help_msg(void)
         "Example:\n"
         "    Input: 3 4 + 5 * !pr\n"
         "    Output: Stack: 35);\n");
-}
-
-double dbl_abs(double num)
-{
-    if (num < 0)
-        return -num;
-    return num;
-}
-
-double dbl_mod(double x, double y)
-{
-    return x - ((int)(x / y) * y);
-}
-
-bool str_cmp(const char *s1, const char *s2)
-{
-    while (*s1 && *s2)
-    {
-        if (*s1 != *s2)
-            return false;
-        ++s1;
-        ++s2;
-    }
-    return *s1 == NULL_CHAR && *s2 == NULL_CHAR;
-}
-
-void push(double num)
-{
-    if (debug)
-        printf("Pushing %g to stack...\n", num);
-    if (stack_pointer == MAX_STACK_DEPTH)
-    {
-        printf("Error: stack overflow. Ignoring value\n");
-        return;
-    }
-    nums_stack[stack_pointer++] = num;
-    if (debug)
-    {
-        printf("Pushed %g to stack\n", num);
-        print_stack();
-    }
-}
-
-double pop(void)
-{
-    double num;
-    if (debug)
-        printf("Popping from stack...\n");
-    if (stack_pointer == 0)
-    {
-        printf("Error: stack underflow. Returning 0\n");
-        return 0;
-    }
-    num = nums_stack[--stack_pointer];
-    if (debug)
-    {
-        printf("Popped %g from stack\n", num);
-        print_stack();
-    }
-    return num;
-}
-
-double peek(void)
-{
-    double num;
-    if (debug)
-        printf("Peeking from stack...\n");
-    if (stack_pointer == 0)
-    {
-        printf("Error: stack underflow. Returning 0\n");
-        return 0;
-    }
-    num = nums_stack[stack_pointer - 1];
-    if (debug)
-    {
-        printf("Peeked %g from stack\n", num);
-        print_stack();
-    }
-    return num;
-}
-
-void clear_stack(void)
-{
-    if (debug)
-        printf("Clearing stack...\n");
-    stack_pointer = 0;
-    nums_stack[0] = NULL_CHAR;
-    if (debug)
-        print_stack();
-}
-
-void print_stack(void)
-{
-    int i;
-    printf("Stack: ");
-    for (i = 0; i < stack_pointer; i++)
-    {
-        printf("%g", nums_stack[i]);
-        if (i != stack_pointer - 1)
-            printf(", ");
-    }
-    printf("\n");
 }
