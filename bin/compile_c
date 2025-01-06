@@ -5,6 +5,7 @@ show_help() {
     echo ""
     echo "Options:"
     echo "  -n, --no-execute    Don't execute the compiled program"
+    echo "  -o, --output        Specify the output file name"
     echo "  -h, --help          Display this help message"
 }
 
@@ -13,10 +14,16 @@ separator() {
 }
 
 EXECUTE=true
+OUTFILE="program.out"
+
 while [[ "$1" == -* ]]; do
     case $1 in
         -n | --no-execute)
             EXECUTE=false
+            ;;
+        -o | --output)
+            shift
+            OUTFILE="$1"
             ;;
         -h | --help)
             show_help
@@ -53,8 +60,6 @@ if [ "${#C_FILES[@]}" -eq 0 ]; then
     show_help
     exit 1
 fi
-
-OUTFILE="program.out"
 
 echo "Compiling files: ${C_FILES[*]} to $OUTFILE"
 if cc -Weverything -Wno-poison-system-directories -std=c17 -o "$OUTFILE" "${C_FILES[@]}"; then
