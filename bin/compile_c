@@ -13,6 +13,12 @@ separator() {
     printf '%*s\n' "$(tput cols)" '' | tr ' ' '='
 }
 
+cleanup() {
+    printf "\nCaught interrupt signal. Removing $OUTFILE"
+    rm -f "$OUTFILE"
+    exit 1
+}
+
 EXECUTE=true
 OUTFILE="program.out"
 
@@ -67,6 +73,7 @@ if cc -Weverything -Wno-poison-system-directories -std=c17 -o "$OUTFILE" "${C_FI
     if $EXECUTE; then
         echo "Executing $OUTFILE:"
         separator
+        trap cleanup SIGINT
         "./$OUTFILE"
         separator
         echo "Execution finished. Removing $OUTFILE"
