@@ -22,15 +22,12 @@
 // statements
 #endif
 
-int main(void)
-{
-    FOR(int i = 0; i < 100; i++)
-    {
+int main(void) {
+    FOR(int i = 0; i < 100; i++) {
         break;
     }
 
-    INFINITE_FOR
-    {
+    INFINITE_FOR {
         break;
     }
 

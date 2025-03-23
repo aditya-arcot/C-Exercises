@@ -6,8 +6,7 @@ void quick_sort(int arr[], int left, int right);
 void swap(int v[], int i, int j);
 void print(int arr[], int length);
 
-int main(void)
-{
+int main(void) {
     int arr[] = {2, 6, 1, 3, 7, 4, 5};
     int size = sizeof(arr) / sizeof(arr[0]);
 
@@ -15,8 +14,7 @@ int main(void)
     print(arr, size);
 }
 
-void quick_sort(int arr[], int left, int right)
-{
+void quick_sort(int arr[], int left, int right) {
     int pivot, next_swap_idx;
 
     // 2 or less elements
@@ -41,15 +39,13 @@ void quick_sort(int arr[], int left, int right)
     quick_sort(arr, pivot + 1, right); // sort right partition
 }
 
-void swap(int v[], int i, int j)
-{
+void swap(int v[], int i, int j) {
     int temp = v[i];
     v[i] = v[j];
     v[j] = temp;
 }
 
-void print(int arr[], int size)
-{
+void print(int arr[], int size) {
     for (int i = 0; i < size; i++)
         printf("%d ", arr[i]);
     printf("\n");

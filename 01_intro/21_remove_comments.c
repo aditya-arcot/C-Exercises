@@ -15,37 +15,29 @@ int escaped = FALSE;
 
 int handle_char(void);
 
-int main(void)
-{
-    while ((ch = getchar()) != EOF)
-    {
+int main(void) {
+    while ((ch = getchar()) != EOF) {
         if (handle_char())
             break;
     }
 }
 
-int handle_char(void)
-{
-    if (in_single_comment)
-    {
-        if (ch == '\n')
-        {
+int handle_char(void) {
+    if (in_single_comment) {
+        if (ch == '\n') {
             putchar(ch);
             in_single_comment = FALSE;
         }
         return 0;
     }
 
-    if (in_multi_comment)
-    {
-        if (ch == '*')
-        {
+    if (in_multi_comment) {
+        if (ch == '*') {
             ch = getchar();
             if (ch == EOF)
                 return 1;
 
-            if (ch == '/')
-            {
+            if (ch == '/') {
                 in_multi_comment = FALSE;
                 return 0;
             }
@@ -53,61 +45,52 @@ int handle_char(void)
         return 0;
     }
 
-    if (escaped)
-    {
+    if (escaped) {
         escaped = FALSE;
         putchar(ch);
         return 0;
     }
 
-    if (ch == '\\')
-    {
+    if (ch == '\\') {
         escaped = TRUE;
         putchar(ch);
         return 0;
     }
 
-    if (ch == '"' && !escaped)
-    {
+    if (ch == '"' && !escaped) {
         in_string = !in_string;
         putchar(ch);
         return 0;
     }
 
-    if (in_string)
-    {
+    if (in_string) {
         putchar(ch);
         return 0;
     }
 
-    if (ch == '\'' && !escaped)
-    {
+    if (ch == '\'' && !escaped) {
         in_char = !in_char;
         putchar(ch);
         return 0;
     }
 
-    if (in_char)
-    {
+    if (in_char) {
         putchar(ch);
         return 0;
     }
 
-    if (ch == '/')
-    {
+    if (ch == '/') {
         int prev_ch = ch;
         ch = getchar();
         if (ch == EOF)
             return 1;
 
-        if (ch == '/')
-        {
+        if (ch == '/') {
             in_single_comment = TRUE;
             return 0;
         }
 
-        if (ch == '*')
-        {
+        if (ch == '*') {
             in_multi_comment = TRUE;
             return 0;
         }

@@ -5,8 +5,7 @@
 void print_int(int n);
 int abs(int n);
 
-int main(void)
-{
+int main(void) {
     print_int(123);
     printf("\n");
 
@@ -22,8 +21,7 @@ int main(void)
     printf("\n");
 }
 
-void print_int(int n)
-{
+void print_int(int n) {
     if (n < 0)
         putchar('-');
     if (n / 10)
@@ -31,8 +29,7 @@ void print_int(int n)
     putchar('0' + (char)abs(n % 10));
 }
 
-int abs(int n)
-{
+int abs(int n) {
     if (n < 0)
         return -n;
     return n;

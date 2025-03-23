@@ -11,38 +11,31 @@ char longest_line[MAX_LINE_PREVIEW + 1];
 int get_line(char line[]);
 void copy(char from[], char to[]);
 
-int main(void)
-{
+int main(void) {
     int len = 0;
     char line[MAX_LINE_PREVIEW + 1];
 
-    while ((len = get_line(line)) > 0)
-    {
+    while ((len = get_line(line)) > 0) {
         // latest line for tie
-        if (len >= max_len)
-        {
+        if (len >= max_len) {
             max_len = len;
             copy(line, longest_line);
         }
     }
 
-    if (max_len > 0)
-    {
+    if (max_len > 0) {
         if (max_len > MAX_LINE_PREVIEW)
             printf("Longest line (%d): %s...\n", max_len, longest_line);
         else
             printf("Longest line (%d): %s\n", max_len, longest_line);
-    }
-    else
+    } else
         printf("No input\n");
 }
 
 // read line into array, return length
-int get_line(char line[])
-{
+int get_line(char line[]) {
     int ch, col = 0;
-    while ((ch = getchar()) != EOF)
-    {
+    while ((ch = getchar()) != EOF) {
         if (col < MAX_LINE_PREVIEW)
             line[col] = ch;
         ++col;
@@ -60,8 +53,7 @@ int get_line(char line[])
 }
 
 // copy character array
-void copy(char from[], char to[])
-{
+void copy(char from[], char to[]) {
     // stop at null terminator
     for (int i = 0; (to[i] = from[i]) != NULL_CHAR; ++i)
         ;

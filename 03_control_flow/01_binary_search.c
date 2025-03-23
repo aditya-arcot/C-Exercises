@@ -4,8 +4,7 @@
 
 int binary_search(int x, int arr[], int n);
 
-int main(void)
-{
+int main(void) {
     int arr[] = {1, 3, 5, 7, 9, 11, 13, 15};
     int n = sizeof(arr) / sizeof(arr[0]);
 
@@ -16,11 +15,9 @@ int main(void)
         printf("%d\t%d\n", test_cases[i], binary_search(test_cases[i], arr, n));
 }
 
-int binary_search(int x, int arr[], int n)
-{
+int binary_search(int x, int arr[], int n) {
     int low = 0, mid, high = n - 1;
-    while (low <= high)
-    {
+    while (low <= high) {
         mid = (low + high) / 2;
         if (x == arr[mid])
             return mid;

@@ -6,32 +6,22 @@
 
 void print_spaces(int n);
 
-int main(void)
-{
+int main(void) {
     int ch, col, spaces;
     col = spaces = 0;
-    while ((ch = getchar()) != EOF)
-    {
-        if (ch == ' ')
-        {
+    while ((ch = getchar()) != EOF) {
+        if (ch == ' ') {
             ++col;
             ++spaces; // buffer space
-        }
-        else
-        {
-            if (spaces > 0)
-            {
+        } else {
+            if (spaces > 0) {
                 // entab buffered spaces
                 int next_tab_spaces = TAB_WIDTH - ((col - spaces) % TAB_WIDTH);
-                if (spaces < next_tab_spaces)
-                {
+                if (spaces < next_tab_spaces) {
                     // not enough spaces for tab
                     print_spaces(spaces);
-                }
-                else
-                {
-                    while (spaces >= next_tab_spaces)
-                    {
+                } else {
+                    while (spaces >= next_tab_spaces) {
                         // print tab
                         putchar('\t');
                         spaces -= next_tab_spaces;
@@ -46,22 +36,17 @@ int main(void)
             // print non-space char
             putchar(ch);
 
-            if (ch == '\n')
-            {
+            if (ch == '\n') {
                 col = 0;
-            }
-            else
-            {
+            } else {
                 ++col;
             }
         }
     }
 }
 
-void print_spaces(int n)
-{
-    while (n > 0)
-    {
+void print_spaces(int n) {
+    while (n > 0) {
         putchar(' ');
         --n;
     }

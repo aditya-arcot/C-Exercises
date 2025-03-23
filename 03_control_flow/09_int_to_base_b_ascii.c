@@ -2,10 +2,10 @@
 // representation in the string s. In particular, itob(n,s,16) formats s as a hexadecimal integer in
 // s.
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
 #include <limits.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
 
 #define NULL_CHAR '\0'
 
@@ -13,8 +13,7 @@ void itob(int n, char s[], int base);
 int abs(int n);
 void reverse(char s[]);
 
-int main(void)
-{
+int main(void) {
     char s[100];
 
     itob(-255, s, 16);
@@ -33,15 +32,13 @@ int main(void)
     printf("%s\n", s);
 }
 
-void itob(int n, char s[], int base)
-{
+void itob(int n, char s[], int base) {
     // record sign
     bool negative = (n < 0);
 
     // add chars to string in reverse order
     int i = 0, r;
-    do
-    {
+    do {
         r = abs(n) % base;
         s[i++] = (r < 10) ? (char)r + '0' : (char)r - 10 + 'A';
     } while (abs(n /= base) != 0);
@@ -57,19 +54,16 @@ void itob(int n, char s[], int base)
     reverse(s);
 }
 
-int abs(int n)
-{
+int abs(int n) {
     if (n < 0)
         return -n;
     return n;
 }
 
-void reverse(char s[])
-{
+void reverse(char s[]) {
     int i, j;
     char ch;
-    for (i = 0, j = (int)strlen(s) - 1; i < j; i++, j--)
-    {
+    for (i = 0, j = (int)strlen(s) - 1; i < j; i++, j--) {
         ch = s[i];
         s[i] = s[j];
         s[j] = ch;

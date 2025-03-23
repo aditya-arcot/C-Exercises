@@ -1,7 +1,7 @@
 // convert integer to left-padded ASCII integer string
 
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
 
 #define NULL_CHAR '\0'
@@ -10,8 +10,7 @@ void itoa(int n, char s[], int min_width);
 int abs(int n);
 void reverse(char s[]);
 
-int main(void)
-{
+int main(void) {
     char s[100];
 
     itoa(-128, s, 5);
@@ -35,8 +34,7 @@ int main(void)
     printf("%s\n", s);
 }
 
-void itoa(int n, char s[], int min_width)
-{
+void itoa(int n, char s[], int min_width) {
     // record sign
     bool negative = (n < 0);
 
@@ -60,19 +58,16 @@ void itoa(int n, char s[], int min_width)
     reverse(s);
 }
 
-int abs(int n)
-{
+int abs(int n) {
     if (n < 0)
         return -n;
     return n;
 }
 
-void reverse(char s[])
-{
+void reverse(char s[]) {
     int i, j;
     char ch;
-    for (i = 0, j = (int)strlen(s) - 1; i < j; i++, j--)
-    {
+    for (i = 0, j = (int)strlen(s) - 1; i < j; i++, j--) {
         ch = s[i];
         s[i] = s[j];
         s[j] = ch;

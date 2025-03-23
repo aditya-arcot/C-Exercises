@@ -1,24 +1,20 @@
 // Helper functions for calculator
 
-#include <stdbool.h>
 #include "calc.h"
+#include <stdbool.h>
 
-double dbl_abs(double num)
-{
+double dbl_abs(double num) {
     if (num < 0)
         return -num;
     return num;
 }
 
-double dbl_mod(double x, double y)
-{
+double dbl_mod(double x, double y) {
     return x - ((int)(x / y) * y);
 }
 
-bool str_cmp(const char *s1, const char *s2)
-{
-    while (*s1 && *s2)
-    {
+bool str_cmp(const char *s1, const char *s2) {
+    while (*s1 && *s2) {
         if (*s1 != *s2)
             return false;
         ++s1;

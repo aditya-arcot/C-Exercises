@@ -5,13 +5,13 @@
     TODO - variables (require knowledge of structs)
 */
 
-#include <stdio.h>
+#include "calc.h"
 #include <ctype.h>
-#include <stdbool.h>
-#include <stdlib.h>
 #include <float.h>
 #include <math.h>
-#include "calc.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 bool debug = false;
 
@@ -28,8 +28,7 @@ static int handle_command(char line[], int idx);
 static void print_use_help_msg(void);
 static void print_help_msg(void);
 
-int main(void)
-{
+int main(void) {
     int len;
     char line[MAX_LINE_LENGTH + 1];
 
@@ -38,8 +37,7 @@ int main(void)
     print_help_msg();
     printf("\n\n");
 
-    while ((len = get_line(line, MAX_LINE_LENGTH)) != EOF)
-    {
+    while ((len = get_line(line, MAX_LINE_LENGTH)) != EOF) {
         handle_line(line, len);
     }
     printf("Exiting...\n");
@@ -47,16 +45,14 @@ int main(void)
 
 // populate char array with line from standard input
 // return line length
-int get_line(char line[], int max_len)
-{
+int get_line(char line[], int max_len) {
     int ch, i;
     bool blank = true;
     ch = i = 0;
 
     while (max_len-- > 0 && (ch = getchar()) != EOF && ch != NEWLINE_CHAR)
         // exclude leading blanks
-        if (!isblank(ch) || !blank)
-        {
+        if (!isblank(ch) || !blank) {
             blank = false;
             line[i++] = (char)ch;
         }
@@ -67,8 +63,7 @@ int get_line(char line[], int max_len)
     line[i] = NULL_CHAR;
 
     // skip remaining line
-    if (max_len < 0)
-    {
+    if (max_len < 0) {
         while ((ch = getchar()) != EOF && ch != NEWLINE_CHAR)
             ;
         printf("Warning: input line was trunctated to %s\n", line);
@@ -77,8 +72,7 @@ int get_line(char line[], int max_len)
     return i;
 }
 
-void handle_line(char line[], int len)
-{
+void handle_line(char line[], int len) {
     int idx, ch;
 
     if (len == 0)
@@ -90,8 +84,7 @@ void handle_line(char line[], int len)
     printf(": %s\n", line);
 
     idx = 0;
-    do
-    {
+    do {
         ch = line[idx];
         if (isblank(ch))
             continue;
@@ -108,8 +101,7 @@ void handle_line(char line[], int len)
             idx = handle_command(line, idx + 1);
         else if (ch == '@')
             idx = handle_function(line, idx + 1);
-        else
-        {
+        else {
             printf("Warning: skipping unknown argument: %c\n", ch);
             print_use_help_msg();
         }
@@ -118,8 +110,7 @@ void handle_line(char line[], int len)
     printf("\n\n");
 }
 
-bool is_number(char line[], int idx)
-{
+bool is_number(char line[], int idx) {
     int ch = line[idx];
 
     if (ch == '-')
@@ -129,8 +120,7 @@ bool is_number(char line[], int idx)
 }
 
 // convert number from char array to double and push to stack
-int handle_number(char line[], int idx)
-{
+int handle_number(char line[], int idx) {
     double num;
     char num_arr[MAX_NUM_LENGTH + 1];
 
@@ -146,25 +136,21 @@ int handle_number(char line[], int idx)
 
 // populate char array with number from line char array
 // return last number character idx
-int read_number(char line[], int idx, char num[])
-{
+int read_number(char line[], int idx, char num[]) {
     bool leading_zero = true, truncated = false;
     int ch, num_idx = 0;
 
-    if ((ch = line[idx]) == '-')
-    {
+    if ((ch = line[idx]) == '-') {
         idx++;
         num[num_idx++] = '-';
     }
 
     // integer part
-    while (isdigit(ch = line[idx]))
-    {
+    while (isdigit(ch = line[idx])) {
         idx++;
 
         // ignore leading 0s
-        if (ch == '0' && leading_zero)
-        {
+        if (ch == '0' && leading_zero) {
             continue;
         }
         leading_zero = false;
@@ -177,16 +163,14 @@ int read_number(char line[], int idx, char num[])
     }
 
     // decimal part
-    if (ch == '.')
-    {
+    if (ch == '.') {
         idx++;
         if (num_idx < MAX_NUM_LENGTH)
             num[num_idx++] = '.';
         else
             truncated = true;
 
-        while (isdigit(ch = line[idx]))
-        {
+        while (isdigit(ch = line[idx])) {
             idx++;
             if (num_idx < MAX_NUM_LENGTH)
                 num[num_idx++] = (char)ch;
@@ -204,14 +188,12 @@ int read_number(char line[], int idx, char num[])
 }
 
 // return last constant character idx
-int handle_constant(char line[], int idx)
-{
+int handle_constant(char line[], int idx) {
     int ch, i = 0;
     bool overflow = false;
     char constant[MAX_CONSTANT_LENGTH + 1];
 
-    while (isalpha(ch = line[idx]))
-    {
+    while (isalpha(ch = line[idx])) {
         idx++;
         if (i < MAX_CONSTANT_LENGTH)
             constant[i++] = (char)tolower(ch);
@@ -220,8 +202,7 @@ int handle_constant(char line[], int idx)
     }
     constant[i] = NULL_CHAR;
 
-    if (overflow)
-    {
+    if (overflow) {
         printf("Warning: skipping unknown constant: #%s...\n", constant);
         print_use_help_msg();
         return idx - 1;
@@ -234,8 +215,7 @@ int handle_constant(char line[], int idx)
         push(M_E);
     else if (str_cmp(constant, "pi"))
         push(M_PI);
-    else
-    {
+    else {
         printf("Warning: skipping unknown constant: #%s\n", constant);
         print_use_help_msg();
     }
@@ -282,15 +262,13 @@ int handle_constant(char line[], int idx)
 //     return idx - 1;
 // }
 
-void handle_operator(char op)
-{
+void handle_operator(char op) {
     double temp;
 
     if (debug)
         printf("Operator: %c\n", op);
 
-    switch (op)
-    {
+    switch (op) {
     case '+':
         push(pop() + pop());
         break;
@@ -302,8 +280,7 @@ void handle_operator(char op)
         push(pop() * pop());
         break;
     case '/':
-        if (dbl_abs(peek()) < DBL_EPSILON)
-        {
+        if (dbl_abs(peek()) < DBL_EPSILON) {
             printf("Error: cannot divide by 0. Ignoring operation\n");
             return;
         }
@@ -311,8 +288,7 @@ void handle_operator(char op)
         push(pop() / temp);
         break;
     case '%':
-        if (dbl_abs(peek()) < DBL_EPSILON)
-        {
+        if (dbl_abs(peek()) < DBL_EPSILON) {
             printf("Error: cannot divide by 0. Ignoring operation\n");
             return;
         }
@@ -323,14 +299,12 @@ void handle_operator(char op)
 }
 
 // return last function character idx
-int handle_function(char line[], int idx)
-{
+int handle_function(char line[], int idx) {
     int ch, i = 0;
     bool overflow = false;
     char function[MAX_FUNCTION_LENGTH + 1];
 
-    while (isalpha(ch = line[idx]))
-    {
+    while (isalpha(ch = line[idx])) {
         idx++;
         if (i < MAX_FUNCTION_LENGTH)
             function[i++] = (char)tolower(ch);
@@ -339,8 +313,7 @@ int handle_function(char line[], int idx)
     }
     function[i] = NULL_CHAR;
 
-    if (overflow)
-    {
+    if (overflow) {
         printf("Warning: skipping unknown function: @%s...\n", function);
         print_use_help_msg();
         return idx - 1;
@@ -365,21 +338,16 @@ int handle_function(char line[], int idx)
         push(fmin(pop(), pop()));
     else if (str_cmp(function, "max"))
         push(fmax(pop(), pop()));
-    else if (str_cmp(function, "sqrt"))
-    {
-        if (peek() < 0)
-        {
+    else if (str_cmp(function, "sqrt")) {
+        if (peek() < 0) {
             printf("Error: cannot take square root of negative number. Ignoring operation\n");
             return idx - 1;
         }
         push(sqrt(pop()));
-    }
-    else if (str_cmp(function, "pow"))
-    {
+    } else if (str_cmp(function, "pow")) {
         double y = pop();
         push(pow(pop(), y));
-    }
-    else if (str_cmp(function, "exp"))
+    } else if (str_cmp(function, "exp"))
         push(exp(pop()));
     else if (str_cmp(function, "log"))
         push(log10(pop()));
@@ -397,8 +365,7 @@ int handle_function(char line[], int idx)
         push(acos(pop()));
     else if (str_cmp(function, "atan"))
         push(atan(pop()));
-    else
-    {
+    else {
         printf("Warning: skipping unknown function: @%s\n", function);
         print_use_help_msg();
     }
@@ -407,15 +374,13 @@ int handle_function(char line[], int idx)
 }
 
 // return last command character idx
-int handle_command(char line[], int idx)
-{
+int handle_command(char line[], int idx) {
     int ch, i = 0;
     bool overflow = false;
     char command[MAX_COMMAND_LENGTH + 1];
     double temp1, temp2;
 
-    while (isalpha(ch = line[idx]))
-    {
+    while (isalpha(ch = line[idx])) {
         idx++;
         if (i < MAX_COMMAND_LENGTH)
             command[i++] = (char)tolower(ch);
@@ -424,8 +389,7 @@ int handle_command(char line[], int idx)
     }
     command[i] = NULL_CHAR;
 
-    if (overflow)
-    {
+    if (overflow) {
         printf("Warning: skipping unknown command: !%s...\n", command);
         print_use_help_msg();
         return idx - 1;
@@ -446,15 +410,12 @@ int handle_command(char line[], int idx)
         printf("Top value: %g\n", peek());
     else if (str_cmp(command, "d") || str_cmp(command, "dup"))
         push(peek());
-    else if (str_cmp(command, "s") || str_cmp(command, "swap"))
-    {
+    else if (str_cmp(command, "s") || str_cmp(command, "swap")) {
         temp1 = pop();
         temp2 = pop();
         push(temp1);
         push(temp2);
-    }
-    else
-    {
+    } else {
         printf("Warning: skipping unknown command: !%s\n", command);
         print_use_help_msg();
     }
@@ -462,78 +423,75 @@ int handle_command(char line[], int idx)
     return idx - 1;
 }
 
-void print_use_help_msg(void)
-{
+void print_use_help_msg(void) {
     printf("Use !h or !help for documentation\n");
 }
 
-void print_help_msg(void)
-{
-    printf(
-        "Reverse Polish Notation Calculator\n"
-        "\n"
-        "Usage:\n"
-        "    Enter numbers, constants, operators, functions, or commands to manipulate the stack.\n"
-        // "    Enter numbers, constants, variables, operators, functions, or commands to manipulate the stack.\n"
-        "    Each line can contain a maximum of 1000 characters.\n"
-        "    Spaces between arguments are optional but recommended for clarity.\n"
-        "    Trignometric functions use units of radians.\n"
-        "\n"
-        "Supported Input:\n"
-        "    Numbers:\n"
-        "        Optional negative sign\n"
-        "        Optional decimal portion\n"
-        "        Maximum length: 15 characters (including '-' and '.')\n"
-        "\n"
-        "    Constants (start with '#'):\n"
-        "        #e     Euler's Number (2.71828)\n"
-        "        #pi    Pi (3.14159)\n"
-        // "\n"
-        // "    Variables (start with '$'):\n"
-        // "        Case insensitive\n"
-        // "        Allowed characters: a-z, A-Z\n"
-        // "        Maximum length: 10 characters (excluding '$')\n"
-        // "        $=var1      Pop the top stack value and assign it to a variable var1.\n"
-        // "        $var1       Push the value of variable var1 to the stack.\n"
-        "\n"
-        "    Operators:\n"
-        "        +   Addition\n"
-        "        -   Subtraction\n"
-        "        *   Multiplication\n"
-        "        /   Division\n"
-        "        %%   Modulus\n"
-        "\n"
-        "    Functions (start with '@'):\n"
-        "        @floor  Floor\n"
-        "        @ceil   Ceiling\n"
-        "        @round  Round\n"
-        "        @trunc  Truncate\n"
-        "        @abs    Absolute Value\n"
-        "        @rand   Random Number Between 0 and 1\n"
-        "        @min    Minimum of x and y\n"
-        "        @max    Maximum of x and y\n"
-        "        @sqrt   Square Root\n"
-        "        @pow    Power (x^y)\n"
-        "        @exp    Exponential (e^x)\n"
-        "        @log    Base-10 Logarithm\n"
-        "        @ln     Natural Logarithm\n"
-        "        @sin    Sine\n"
-        "        @cos    Cosine\n"
-        "        @tan    Tangent\n"
-        "        @asin   Inverse Sine\n"
-        "        @acos   Inverse Cosine\n"
-        "        @atan   Inverse Tangent\n"
-        "\n"
-        "    Commands (start with '!'):\n"
-        "        !h or !help     Show this help message.\n"
-        "        !c or !clear    Clear the stack.\n"
-        "        !pr or !print   Display the current stack.\n"
-        "        !pop            Remove and display the top stack value.\n"
-        "        !peek           Display the top stack value without removing it.\n"
-        "        !d or !dup      Duplicate the top stack value.\n"
-        "        !s or !swap     Swap the top two stack values.\n"
-        "\n"
-        "Example:\n"
-        "    Input: 3 4 + 5 * !pr\n"
-        "    Output: Stack: 35);\n");
+void print_help_msg(void) {
+    printf("Reverse Polish Notation Calculator\n"
+           "\n"
+           "Usage:\n"
+           "    Enter numbers, constants, operators, functions, or commands to manipulate the stack.\n"
+           // "    Enter numbers, constants, variables, operators, functions, or commands to manipulate the stack.\n"
+           "    Each line can contain a maximum of 1000 characters.\n"
+           "    Spaces between arguments are optional but recommended for clarity.\n"
+           "    Trignometric functions use units of radians.\n"
+           "\n"
+           "Supported Input:\n"
+           "    Numbers:\n"
+           "        Optional negative sign\n"
+           "        Optional decimal portion\n"
+           "        Maximum length: 15 characters (including '-' and '.')\n"
+           "\n"
+           "    Constants (start with '#'):\n"
+           "        #e     Euler's Number (2.71828)\n"
+           "        #pi    Pi (3.14159)\n"
+           // "\n"
+           // "    Variables (start with '$'):\n"
+           // "        Case insensitive\n"
+           // "        Allowed characters: a-z, A-Z\n"
+           // "        Maximum length: 10 characters (excluding '$')\n"
+           // "        $=var1      Pop the top stack value and assign it to a variable var1.\n"
+           // "        $var1       Push the value of variable var1 to the stack.\n"
+           "\n"
+           "    Operators:\n"
+           "        +   Addition\n"
+           "        -   Subtraction\n"
+           "        *   Multiplication\n"
+           "        /   Division\n"
+           "        %%   Modulus\n"
+           "\n"
+           "    Functions (start with '@'):\n"
+           "        @floor  Floor\n"
+           "        @ceil   Ceiling\n"
+           "        @round  Round\n"
+           "        @trunc  Truncate\n"
+           "        @abs    Absolute Value\n"
+           "        @rand   Random Number Between 0 and 1\n"
+           "        @min    Minimum of x and y\n"
+           "        @max    Maximum of x and y\n"
+           "        @sqrt   Square Root\n"
+           "        @pow    Power (x^y)\n"
+           "        @exp    Exponential (e^x)\n"
+           "        @log    Base-10 Logarithm\n"
+           "        @ln     Natural Logarithm\n"
+           "        @sin    Sine\n"
+           "        @cos    Cosine\n"
+           "        @tan    Tangent\n"
+           "        @asin   Inverse Sine\n"
+           "        @acos   Inverse Cosine\n"
+           "        @atan   Inverse Tangent\n"
+           "\n"
+           "    Commands (start with '!'):\n"
+           "        !h or !help     Show this help message.\n"
+           "        !c or !clear    Clear the stack.\n"
+           "        !pr or !print   Display the current stack.\n"
+           "        !pop            Remove and display the top stack value.\n"
+           "        !peek           Display the top stack value without removing it.\n"
+           "        !d or !dup      Duplicate the top stack value.\n"
+           "        !s or !swap     Swap the top two stack values.\n"
+           "\n"
+           "Example:\n"
+           "    Input: 3 4 + 5 * !pr\n"
+           "    Output: Stack: 35);\n");
 }

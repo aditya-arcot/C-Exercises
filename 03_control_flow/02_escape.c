@@ -9,21 +9,17 @@
 
 void escape(char in[], char out[]);
 
-int main(void)
-{
+int main(void) {
     char in[] = "abc\t123\ntest";
     char out[100];
     escape(in, out);
     printf("%s\n", out);
 }
 
-void escape(char in[], char out[])
-{
+void escape(char in[], char out[]) {
     int i, j;
-    for (i = j = 0; in[i] != NULL_CHAR; i++)
-    {
-        switch (in[i])
-        {
+    for (i = j = 0; in[i] != NULL_CHAR; i++) {
+        switch (in[i]) {
         case '\n':
             out[j++] = '\\';
             out[j++] = 'n';

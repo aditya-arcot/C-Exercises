@@ -12,8 +12,7 @@
 
 double to_celsius(int fahr);
 
-int main(void)
-{
+int main(void) {
     int fahr;
     // float celsius;
     // int lower, upper, step;
@@ -36,7 +35,6 @@ int main(void)
         printf("%10d %7.1f\n", fahr, to_celsius(fahr));
 }
 
-double to_celsius(int fahr)
-{
+double to_celsius(int fahr) {
     return 5.0 / 9 * (fahr - 32);
 }

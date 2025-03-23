@@ -8,14 +8,12 @@
 int get_line(char line[], int max);
 int find_substring_idx(char str[], char substr[]);
 
-int main(void)
-{
+int main(void) {
     char line[MAX_LINE + 1]; // 1 extra for null terminator
     char pattern[] = "abc";
 
     // while not EOF
-    while (get_line(line, MAX_LINE) != EOF)
-    {
+    while (get_line(line, MAX_LINE) != EOF) {
         // skip empty line
         if (line[0] == NULL_CHAR)
             continue;
@@ -27,8 +25,7 @@ int main(void)
     }
 }
 
-int get_line(char line[], int max)
-{
+int get_line(char line[], int max) {
     int ch, i;
     ch = i = 0;
 
@@ -52,12 +49,10 @@ int get_line(char line[], int max)
     return i;
 }
 
-int find_substring_idx(char str[], char substr[])
-{
+int find_substring_idx(char str[], char substr[]) {
     int i, j, k;
     // iterate over string characters
-    for (i = 0; str[i] != NULL_CHAR; i++)
-    {
+    for (i = 0; str[i] != NULL_CHAR; i++) {
         // check characters match until end of either string
         for (j = i, k = 0; str[j] != NULL_CHAR && substr[k] != NULL_CHAR && str[j] == substr[k]; j++, k++)
             ;

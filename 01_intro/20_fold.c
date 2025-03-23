@@ -10,7 +10,9 @@ int buffer_idx = 0;
 int last_whitespace = -1;
 char buffer[COLUMN_WIDTH + 1];
 
-int is_whitespace(char ch) { return ch == ' ' || ch == '\t'; }
+int is_whitespace(char ch) {
+    return ch == ' ' || ch == '\t';
+}
 void flush_and_reset_buffer(void);
 void print_buffer(int n);
 void shift_buffer_after_last_whitespace(void);
@@ -19,80 +21,66 @@ void handle_char(char ch);
 void handle_newline(void);
 void handle_whitespace(char ch);
 
-int main(void)
-{
+int main(void) {
     int ch;
     buffer[COLUMN_WIDTH] = NULL_CHAR;
 
-    while ((ch = getchar()) != EOF)
-    {
+    while ((ch = getchar()) != EOF) {
         handle_char(ch);
     }
 
     // in case end of input without newline
-    if (buffer_idx > 0)
-    {
+    if (buffer_idx > 0) {
         flush_and_reset_buffer();
     }
 }
 
-void flush_and_reset_buffer(void)
-{
+void flush_and_reset_buffer(void) {
     print_buffer(buffer_idx);
     buffer_idx = 0;
     last_whitespace = -1;
 }
 
-void print_buffer(int n)
-{
+void print_buffer(int n) {
     for (int i = 0; i < n; ++i)
         putchar(buffer[i]);
 }
 
-void shift_buffer_after_last_whitespace(void)
-{
+void shift_buffer_after_last_whitespace(void) {
     int remaining = buffer_idx - (last_whitespace + 1);
-    for (int i = 0; i < remaining; ++i)
-    {
+    for (int i = 0; i < remaining; ++i) {
         buffer[i] = buffer[last_whitespace + 1 + i];
     }
     buffer_idx = remaining;
 }
 
-void move_to_next_line(void)
-{
+void move_to_next_line(void) {
     putchar('\n');
     col = 0;
 }
 
-void handle_char(char ch)
-{
-    if (ch == '\n')
-    {
+void handle_char(char ch) {
+    if (ch == '\n') {
         handle_newline();
         return;
     }
 
-    if (is_whitespace(ch))
-    {
+    if (is_whitespace(ch)) {
         handle_whitespace(ch);
         return;
     }
 
     // buffer previously printed
-    if (col > 0)
-    {
+    if (col > 0) {
         // print char
         putchar(ch);
         return;
     }
 
     // full buffer
-    if (buffer_idx == COLUMN_WIDTH)
-    {
+    if (buffer_idx == COLUMN_WIDTH) {
         // whitespace in buffer
-        if (last_whitespace != -1)
-        {
+        if (last_whitespace != -1) {
             // print buffer till last whitespace, continue to new line
             print_buffer(last_whitespace);
             move_to_next_line();
@@ -119,31 +107,26 @@ void handle_char(char ch)
     ++buffer_idx;
 }
 
-void handle_newline(void)
-{
+void handle_newline(void) {
     flush_and_reset_buffer();
     move_to_next_line();
 }
 
-void handle_whitespace(char ch)
-{
+void handle_whitespace(char ch) {
     // buffer previously printed
-    if (col > 0)
-    {
+    if (col > 0) {
         move_to_next_line();
         return;
     }
 
     // nothing printed, empty buffer
-    if (buffer_idx == 0)
-    {
+    if (buffer_idx == 0) {
         // ignore for left trim
         return;
     }
 
     // full buffer
-    if (buffer_idx == COLUMN_WIDTH)
-    {
+    if (buffer_idx == COLUMN_WIDTH) {
         flush_and_reset_buffer();
         move_to_next_line();
         return;

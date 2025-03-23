@@ -2,12 +2,10 @@
 
 #include <stdio.h>
 
-int main(void)
-{
+int main(void) {
     int c;
     printf("Enter characters (end using Ctrl+D):\n");
-    while ((c = getchar()) != EOF)
-    {
+    while ((c = getchar()) != EOF) {
         putchar(c);
         if (c != '\n')
             putchar(' ');

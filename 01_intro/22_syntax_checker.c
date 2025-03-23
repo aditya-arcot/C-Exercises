@@ -45,7 +45,8 @@ int directive_line = FALSE;
 int directive_name_done = FALSE;
 int directive_name_idx = 0;
 char directive_buffer[MAX_DIRECTIVE_NAME_LENGTH + 1];
-const char *valid_directives[] = {"define", "include", "if", "ifdef", "ifndef", "else", "elif", "endif", "undef", "pragma"};
+const char *valid_directives[] = {"define", "include", "if",    "ifdef", "ifndef",
+                                  "else",   "elif",    "endif", "undef", "pragma"};
 int brackets_stack_idx = 0;
 char brackets_stack[MAX_BRACKETS_STACK_LENGTH + 1];
 int in_single_comment = FALSE;
@@ -76,26 +77,21 @@ int push_char(char ch);
 int pop_char(void);
 int is_valid_escape(char escape);
 
-int main(void)
-{
+int main(void) {
     directive_buffer[MAX_DIRECTIVE_NAME_LENGTH] = NULL_CHAR;
     brackets_stack[MAX_BRACKETS_STACK_LENGTH] = NULL_CHAR;
     char_buffer[MAX_CHAR_LENGTH] = NULL_CHAR;
 
-    if (check_syntax())
-    {
+    if (check_syntax()) {
         print_syntax_err();
         return ERROR;
     }
     printf("Checked %d lines. No syntax errors\n", line);
 }
 
-int are_matching_strings(const char *a, const char *b)
-{
-    while (*a && *b)
-    {
-        if (*a != *b)
-        {
+int are_matching_strings(const char *a, const char *b) {
+    while (*a && *b) {
+        if (*a != *b) {
             return FALSE;
         }
         ++a;
@@ -104,16 +100,13 @@ int are_matching_strings(const char *a, const char *b)
     return *a == NULL_CHAR && *b == NULL_CHAR;
 }
 
-void print_syntax_err(void)
-{
+void print_syntax_err(void) {
     printf("Syntax error - line %d, col %d\n", line, col);
 }
 
-int check_syntax(void)
-{
+int check_syntax(void) {
     int ch;
-    while ((ch = getchar()) != EOF)
-    {
+    while ((ch = getchar()) != EOF) {
         ++col;
         if (handle_char(ch))
             return ERROR;
@@ -122,26 +115,22 @@ int check_syntax(void)
     if (perform_newline_checks())
         return ERROR;
 
-    if (brackets_stack_idx > 0)
-    {
+    if (brackets_stack_idx > 0) {
         print_unclosed_brackets_err();
         return ERROR;
     }
 
-    if (in_multi_comment)
-    {
+    if (in_multi_comment) {
         printf("Unclosed multi-line comment\n");
         return ERROR;
     }
 
-    if (in_string)
-    {
+    if (in_string) {
         printf("Unclosed string\n");
         return ERROR;
     }
 
-    if (in_char)
-    {
+    if (in_char) {
         printf("Unclosed character literal\n");
         return ERROR;
     }
@@ -149,72 +138,53 @@ int check_syntax(void)
     return SUCCESS;
 }
 
-int handle_char(char ch)
-{
-    if (debug)
-    {
-        if (ch == '\n')
-        {
+int handle_char(char ch) {
+    if (debug) {
+        if (ch == '\n') {
             printf("line %-3d col %-3d [newline]\n", line, col);
-        }
-        else if (ch == ' ')
-        {
+        } else if (ch == ' ') {
             printf("line %-3d col %-3d [space]\n", line, col);
-        }
-        else if (ch == '\t')
-        {
+        } else if (ch == '\t') {
             printf("line %-3d col %-3d [tab]\n", line, col);
-        }
-        else
-        {
+        } else {
             printf("line %-3d col %-3d %c\n", line, col, ch);
         }
     }
 
-    if (in_single_comment)
-    {
-        if (ch == '\n')
-        {
+    if (in_single_comment) {
+        if (ch == '\n') {
             in_single_comment = FALSE;
             move_to_new_line();
         }
         return SUCCESS;
     }
 
-    if (in_multi_comment)
-    {
-        if (ch == '*')
-        {
+    if (in_multi_comment) {
+        if (ch == '*') {
             ch = getchar();
-            if (ch == EOF)
-            {
+            if (ch == EOF) {
                 printf("Unclosed multi-line comment\n");
                 return ERROR;
             }
 
             ++col;
 
-            if (ch == '\n')
-            {
+            if (ch == '\n') {
                 move_to_new_line();
                 return SUCCESS;
             }
-            if (ch == '/')
-            {
+            if (ch == '/') {
                 in_multi_comment = FALSE;
                 return SUCCESS;
             }
-        }
-        else if (ch == '\n')
+        } else if (ch == '\n')
             move_to_new_line();
 
         return SUCCESS;
     }
 
-    if (escaped)
-    {
-        if (ch == '\n')
-        {
+    if (escaped) {
+        if (ch == '\n') {
             escaped = FALSE;
             if (in_char && pop_char())
                 return ERROR;
@@ -223,8 +193,7 @@ int handle_char(char ch)
         }
         if (in_char && push_char(ch))
             return ERROR;
-        if (!is_valid_escape(ch))
-        {
+        if (!is_valid_escape(ch)) {
             printf("Invalid escape sequence\n");
             return ERROR;
         }
@@ -233,8 +202,7 @@ int handle_char(char ch)
         return SUCCESS;
     }
 
-    if (ch == '\\')
-    {
+    if (ch == '\\') {
         if (in_char && push_char(ch))
             return ERROR;
         escaped = TRUE;
@@ -242,38 +210,30 @@ int handle_char(char ch)
         return SUCCESS;
     }
 
-    if (in_string)
-    {
-        if (ch == '"')
-        {
+    if (in_string) {
+        if (ch == '"') {
             in_string = FALSE;
             return SUCCESS;
         }
-        if (ch == '\n')
-        {
+        if (ch == '\n') {
             printf("Unclosed string\n");
             return ERROR;
         }
         return SUCCESS;
     }
 
-    if (in_char)
-    {
-        if (ch == '\'')
-        {
+    if (in_char) {
+        if (ch == '\'') {
             in_char = FALSE;
-            if (char_buffer_idx == 1)
-            {
+            if (char_buffer_idx == 1) {
                 char_buffer_idx = 0;
                 return SUCCESS;
             }
-            if (char_buffer_idx < 1)
-            {
+            if (char_buffer_idx < 1) {
                 printf("Empty character literal\n");
                 return ERROR;
             }
-            if (char_buffer[0] != '\\')
-            {
+            if (char_buffer[0] != '\\') {
                 printf("character literal too long\n");
                 return ERROR;
             }
@@ -281,58 +241,43 @@ int handle_char(char ch)
             char_buffer_idx = 0;
             return SUCCESS;
         }
-        if (ch == '\n')
-        {
+        if (ch == '\n') {
             printf("Unclosed character literal\n");
             return ERROR;
         }
         return push_char(ch);
     }
 
-    if (ch == '\n')
-    {
-        if (perform_newline_checks())
-        {
+    if (ch == '\n') {
+        if (perform_newline_checks()) {
             return ERROR;
         }
         move_to_new_line();
         return SUCCESS;
-    }
-    else if (ch == ' ' || ch == '\t')
-    {
-        if (directive_line && !directive_name_done && directive_name_idx > 0)
-        {
+    } else if (ch == ' ' || ch == '\t') {
+        if (directive_line && !directive_name_done && directive_name_idx > 0) {
             directive_name_done = TRUE;
-            if (!is_valid_directive())
-            {
+            if (!is_valid_directive()) {
                 print_invalid_directive_name_err();
                 return ERROR;
             }
         }
         return SUCCESS;
-    }
-    else if (ch == '#')
-    {
-        if (non_blank_line)
-        {
+    } else if (ch == '#') {
+        if (non_blank_line) {
             printf("Invalid directive\n");
             return ERROR;
         }
         non_blank_line = TRUE;
         directive_line = TRUE;
         return SUCCESS;
-    }
-    else if (ch == '(' || ch == '{' || ch == '[')
-    {
-        if (push_bracket(ch))
-        {
+    } else if (ch == '(' || ch == '{' || ch == '[') {
+        if (push_bracket(ch)) {
             return ERROR;
         }
         non_blank_line = TRUE;
         return SUCCESS;
-    }
-    else if (ch == ')' || ch == '}' || ch == ']')
-    {
+    } else if (ch == ')' || ch == '}' || ch == ']') {
         char expected_bracket = get_opening_bracket(ch);
         if (expected_bracket == ERROR)
             return ERROR;
@@ -341,53 +286,42 @@ int handle_char(char ch)
         if (opening_bracket == ERROR)
             return ERROR;
 
-        if (opening_bracket != expected_bracket)
-        {
+        if (opening_bracket != expected_bracket) {
             printf("Mismatched brackets - %c, %c\n", opening_bracket, ch);
             return ERROR;
         }
 
         non_blank_line = TRUE;
         return SUCCESS;
-    }
-    else if (ch == '/')
-    {
+    } else if (ch == '/') {
         ch = getchar();
-        if (ch == EOF)
-        {
+        if (ch == EOF) {
             printf("Unexpected EOF\n");
             return ERROR;
         }
-        if (ch == '\n')
-        {
+        if (ch == '\n') {
             printf("Unexpected newline\n");
             return ERROR;
         }
 
         ++col;
 
-        if (ch == '/')
-        {
+        if (ch == '/') {
             in_single_comment = TRUE;
             return SUCCESS;
         }
-        if (ch == '*')
-        {
+        if (ch == '*') {
             in_multi_comment = TRUE;
             return SUCCESS;
         }
 
         non_blank_line = TRUE;
         return SUCCESS;
-    }
-    else if (ch == '"')
-    {
+    } else if (ch == '"') {
         non_blank_line = TRUE;
         in_string = TRUE;
         return SUCCESS;
-    }
-    else if (ch == '\'')
-    {
+    } else if (ch == '\'') {
         non_blank_line = TRUE;
         in_char = TRUE;
         return SUCCESS;
@@ -395,8 +329,7 @@ int handle_char(char ch)
 
     non_blank_line = TRUE;
 
-    if (directive_line && !directive_name_done && push_directive_name_char(ch))
-    {
+    if (directive_line && !directive_name_done && push_directive_name_char(ch)) {
         print_invalid_directive_name_err();
         return ERROR;
     }
@@ -404,18 +337,15 @@ int handle_char(char ch)
     return SUCCESS;
 }
 
-int perform_newline_checks(void)
-{
-    if (directive_line && !directive_name_done && !is_valid_directive())
-    {
+int perform_newline_checks(void) {
+    if (directive_line && !directive_name_done && !is_valid_directive()) {
         print_invalid_directive_name_err();
         return ERROR;
     }
     return SUCCESS;
 }
 
-void move_to_new_line(void)
-{
+void move_to_new_line(void) {
     ++line;
     col = 1;
     non_blank_line = FALSE;
@@ -424,47 +354,38 @@ void move_to_new_line(void)
     directive_name_idx = 0;
 }
 
-int push_directive_name_char(char ch)
-{
-    if (directive_name_idx == MAX_DIRECTIVE_NAME_LENGTH)
-    {
+int push_directive_name_char(char ch) {
+    if (directive_name_idx == MAX_DIRECTIVE_NAME_LENGTH) {
         return ERROR;
     }
     directive_buffer[directive_name_idx++] = ch;
     return SUCCESS;
 }
 
-void print_directive_name(void)
-{
+void print_directive_name(void) {
     for (int i = 0; i < directive_name_idx; ++i)
         printf("%c", directive_buffer[i]);
 }
 
-void print_invalid_directive_name_err(void)
-{
+void print_invalid_directive_name_err(void) {
     printf("Invalid directive name - ");
     print_directive_name();
     printf("\n");
 }
 
-int is_valid_directive(void)
-{
+int is_valid_directive(void) {
     directive_buffer[directive_name_idx] = NULL_CHAR;
     size_t num_directives = sizeof(valid_directives) / sizeof(valid_directives[0]);
-    for (size_t i = 0; i < num_directives; ++i)
-    {
-        if (are_matching_strings(directive_buffer, valid_directives[i]))
-        {
+    for (size_t i = 0; i < num_directives; ++i) {
+        if (are_matching_strings(directive_buffer, valid_directives[i])) {
             return TRUE;
         }
     }
     return FALSE;
 }
 
-int push_bracket(char ch)
-{
-    if (brackets_stack_idx == MAX_BRACKETS_STACK_LENGTH)
-    {
+int push_bracket(char ch) {
+    if (brackets_stack_idx == MAX_BRACKETS_STACK_LENGTH) {
         printf("Reached maximum brackets stack depth\n");
         return ERROR;
     }
@@ -472,18 +393,15 @@ int push_bracket(char ch)
     return SUCCESS;
 }
 
-char pop_bracket(void)
-{
-    if (brackets_stack_idx == 0)
-    {
+char pop_bracket(void) {
+    if (brackets_stack_idx == 0) {
         printf("No opening brackets in the stack\n");
         return ERROR;
     }
     return brackets_stack[--brackets_stack_idx];
 }
 
-char get_opening_bracket(char closing_bracket)
-{
+char get_opening_bracket(char closing_bracket) {
     if (closing_bracket == '}')
         return '{';
     if (closing_bracket == ')')
@@ -494,27 +412,22 @@ char get_opening_bracket(char closing_bracket)
     return ERROR;
 }
 
-void print_brackets_stack(void)
-{
-    for (int i = 0; i < brackets_stack_idx; ++i)
-    {
+void print_brackets_stack(void) {
+    for (int i = 0; i < brackets_stack_idx; ++i) {
         printf("%c", brackets_stack[i]);
         if (i != brackets_stack_idx - 1)
             printf(", ");
     }
 }
 
-void print_unclosed_brackets_err(void)
-{
+void print_unclosed_brackets_err(void) {
     printf("Unclosed brackets - ");
     print_brackets_stack();
     printf("\n");
 }
 
-int push_char(char ch)
-{
-    if (char_buffer_idx == MAX_CHAR_LENGTH)
-    {
+int push_char(char ch) {
+    if (char_buffer_idx == MAX_CHAR_LENGTH) {
         printf("character literal too long\n");
         return ERROR;
     }
@@ -522,10 +435,8 @@ int push_char(char ch)
     return SUCCESS;
 }
 
-int pop_char(void)
-{
-    if (char_buffer_idx == 0)
-    {
+int pop_char(void) {
+    if (char_buffer_idx == 0) {
         printf("No char in the buffer\n");
         return ERROR;
     }
@@ -533,13 +444,10 @@ int pop_char(void)
     return SUCCESS;
 }
 
-int is_valid_escape(char escape)
-{
+int is_valid_escape(char escape) {
     size_t num_escapes = sizeof(valid_escapes) / sizeof(valid_escapes[0]);
-    for (size_t i = 0; i < num_escapes; ++i)
-    {
-        if (escape == valid_escapes[i])
-        {
+    for (size_t i = 0; i < num_escapes; ++i) {
+        if (escape == valid_escapes[i]) {
             return TRUE;
         }
     }

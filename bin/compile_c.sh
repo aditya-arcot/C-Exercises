@@ -1,7 +1,7 @@
 #!/bin/bash
 
 show_help() {
-    echo "Usage: compile_c [options] file1.c [file2.c ... fileN.c]"
+    echo "Usage: compile_c.sh [options] file1.c [file2.c ... fileN.c]"
     echo ""
     echo "Options:"
     echo "  -n, --no-execute    Don't execute the compiled program"
@@ -14,7 +14,7 @@ separator() {
 }
 
 cleanup() {
-    printf "\nCaught interrupt signal. Removing $OUTFILE"
+    printf "\nCaught interrupt signal. Removing %s" "$OUTFILE"
     rm -f "$OUTFILE"
     exit 1
 }
@@ -45,7 +45,7 @@ while [[ "$1" == -* ]]; do
 done
 
 if [ "$#" -lt 1 ]; then
-    echo "No files provided."
+    echo "No files provided"
     show_help
     exit 1
 fi
@@ -62,14 +62,14 @@ for arg in "$@"; do
 done
 
 if [ "${#C_FILES[@]}" -eq 0 ]; then
-    echo "No valid .c files provided."
+    echo "No valid .c files provided"
     show_help
     exit 1
 fi
 
 echo "Compiling files: ${C_FILES[*]} to $OUTFILE"
 if cc -Weverything -Wno-poison-system-directories -std=c17 -o "$OUTFILE" "${C_FILES[@]}"; then
-    echo "Compilation successful."
+    echo "Compilation successful"
     if $EXECUTE; then
         echo "Executing $OUTFILE:"
         separator
@@ -82,6 +82,6 @@ if cc -Weverything -Wno-poison-system-directories -std=c17 -o "$OUTFILE" "${C_FI
         echo "Execution skipped. Preserving $OUTFILE"
     fi
 else
-    echo "Compilation failed."
+    echo "Compilation failed"
     exit 1
 fi

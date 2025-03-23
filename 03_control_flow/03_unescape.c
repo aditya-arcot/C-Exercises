@@ -9,24 +9,19 @@
 
 void unescape(char in[], char out[]);
 
-int main(void)
-{
+int main(void) {
     char in[] = "abc\\t123\\ntest";
     char out[100];
     unescape(in, out);
     printf("%s\n", out);
 }
 
-void unescape(char in[], char out[])
-{
+void unescape(char in[], char out[]) {
     int i, j;
-    for (i = j = 0; in[i] != NULL_CHAR; i++)
-    {
-        switch (in[i])
-        {
+    for (i = j = 0; in[i] != NULL_CHAR; i++) {
+        switch (in[i]) {
         case '\\':
-            switch (in[++i])
-            {
+            switch (in[++i]) {
             case 'n':
                 out[j++] = '\n';
                 break;

@@ -6,20 +6,17 @@
 void reverse(char s[]);
 void _reverse(char s[], int left, int right);
 
-int main(void)
-{
+int main(void) {
     char s[] = "abcde";
     reverse(s);
     printf("%s\n", s);
 }
 
-void reverse(char s[])
-{
+void reverse(char s[]) {
     _reverse(s, 0, (int)strlen(s) - 1);
 }
 
-void _reverse(char s[], int left, int right)
-{
+void _reverse(char s[], int left, int right) {
     char temp;
 
     if (left >= right)

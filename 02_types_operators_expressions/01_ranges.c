@@ -1,9 +1,8 @@
-#include <stdio.h>
-#include <limits.h>
 #include <float.h>
+#include <limits.h>
+#include <stdio.h>
 
-int main(void)
-{
+int main(void) {
     printf("char\n");
     printf("signed char min:   %4d\n", SCHAR_MIN);
     printf("signed char max:   %4d\n", SCHAR_MAX);

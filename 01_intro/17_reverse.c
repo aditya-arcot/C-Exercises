@@ -8,19 +8,16 @@
 int get_line(char line[], int max_line_len);
 void reverse(char line[], int len);
 
-int main(void)
-{
+int main(void) {
     int len = 0;
     char line[MAX_LINE + 1];
     while ((len = get_line(line, MAX_LINE)) > 0)
         reverse(line, len);
 }
 
-int get_line(char line[], int max_line_len)
-{
+int get_line(char line[], int max_line_len) {
     int ch, col = 0;
-    while ((ch = getchar()) != EOF)
-    {
+    while ((ch = getchar()) != EOF) {
         ++col;
         if (ch == '\n')
             break;
@@ -31,8 +28,7 @@ int get_line(char line[], int max_line_len)
     return col;
 }
 
-void reverse(char line[], int len)
-{
+void reverse(char line[], int len) {
     for (int i = len - 1; i >= 0; --i)
         putchar(line[i]);
     putchar('\n');

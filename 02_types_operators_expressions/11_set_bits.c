@@ -13,22 +13,18 @@ static int max_print_bits = 8;
 unsigned set_bits(unsigned x, unsigned y, int p, int n);
 void print_binary(unsigned x);
 
-int main(void)
-{
+int main(void) {
     printf("%u\n\n", set_bits(157, 42, 5, 3));
     printf("%u\n\n", set_bits(145, 115, 6, 3));
     printf("%u\n\n", set_bits(255, 0, 6, 2));
 }
 
-unsigned set_bits(unsigned x, unsigned y, int p, int n)
-{
-    if (p < 0)
-    {
+unsigned set_bits(unsigned x, unsigned y, int p, int n) {
+    if (p < 0) {
         printf("p cannot be less than 0\n");
         return 0;
     }
-    if (n < 1)
-    {
+    if (n < 1) {
         printf("n cannot be less than 1\n");
         return 0;
     }
@@ -76,20 +72,16 @@ unsigned set_bits(unsigned x, unsigned y, int p, int n)
     return x;
 }
 
-void print_binary(unsigned x)
-{
+void print_binary(unsigned x) {
     int bits = sizeof(x) * 8;
-    if (bits > max_print_bits)
-    {
+    if (bits > max_print_bits) {
         bits = max_print_bits;
         printf("... ");
     }
-    for (int i = bits - 1; i >= 0; i--)
-    {
+    for (int i = bits - 1; i >= 0; i--) {
         unsigned bit = (x >> i) & 1;
         printf("%u", bit);
-        if (i % 4 == 0)
-        {
+        if (i % 4 == 0) {
             printf(" ");
         }
     }

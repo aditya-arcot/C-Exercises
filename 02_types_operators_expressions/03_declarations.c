@@ -3,8 +3,7 @@
 const double e; // initialized to 0.0
 const double pi = 3.14159;
 
-int main(void)
-{
+int main(void) {
     printf("e - %f\n", e);
 
     const int a; // contains garbage value

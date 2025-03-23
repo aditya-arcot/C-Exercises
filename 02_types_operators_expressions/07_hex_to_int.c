@@ -4,15 +4,14 @@
     optional leading 0x or 0X
 */
 
-#include <stdio.h>
-#include <stdbool.h>
 #include <ctype.h>
+#include <stdbool.h>
+#include <stdio.h>
 
 int htoi(char s[]);
 int calculate_int(int n, int hex);
 
-int main(void)
-{
+int main(void) {
     char s[] = "0x1f";
     printf("%s - %d\n", s, htoi(s));
 
@@ -20,18 +19,14 @@ int main(void)
     printf("%s - %d\n", s2, htoi(s2));
 }
 
-int htoi(char s[])
-{
+int htoi(char s[]) {
     int n = 0;
     bool prefix = true;
-    for (int i = 0; s[i] != EOF; i++)
-    {
+    for (int i = 0; s[i] != EOF; i++) {
         int ch = s[i];
-        if (prefix)
-        {
+        if (prefix) {
             prefix = false;
-            if (s[i] == '0')
-            {
+            if (s[i] == '0') {
                 ch = s[++i];
                 if (ch == 'x' || ch == 'X')
                     continue;
@@ -52,8 +47,7 @@ int htoi(char s[])
     return n;
 }
 
-int calculate_int(int n, int hex)
-{
+int calculate_int(int n, int hex) {
     if (!isxdigit(hex))
         return n;
     if (hex >= '0' && hex <= '9')

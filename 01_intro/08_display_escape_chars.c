@@ -2,11 +2,9 @@
 
 #include <stdio.h>
 
-int main(void)
-{
+int main(void) {
     int ch;
-    while ((ch = getchar()) != EOF)
-    {
+    while ((ch = getchar()) != EOF) {
         if (ch == '\t')
             printf("<\\t>");
         else if (ch == '\b')

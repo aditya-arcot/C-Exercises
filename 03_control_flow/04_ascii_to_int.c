@@ -1,18 +1,16 @@
 // convert ASCII integer string to integer
 
-#include <stdio.h>
 #include <ctype.h>
+#include <stdio.h>
 
 int atoi(char s[]);
 
-int main(void)
-{
+int main(void) {
     char s[] = " -123a4";
     printf("%d\n", atoi(s));
 }
 
-int atoi(char s[])
-{
+int atoi(char s[]) {
     int i, sign, n;
 
     // skip leading space

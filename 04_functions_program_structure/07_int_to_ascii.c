@@ -7,8 +7,7 @@
 void itoa(int n, char s[]);
 int abs(int n);
 
-int main(void)
-{
+int main(void) {
     char s[100];
 
     itoa(-128, s);
@@ -32,13 +31,11 @@ int main(void)
     printf("%s\n", s);
 }
 
-void itoa(int n, char s[])
-{
+void itoa(int n, char s[]) {
     static int idx;
     if (n / 10)
         itoa(n / 10, s);
-    else
-    {
+    else {
         idx = 0;
         if (n < 0)
             s[idx++] = '-';
@@ -47,8 +44,7 @@ void itoa(int n, char s[])
     s[idx] = NULL_CHAR;
 }
 
-int abs(int n)
-{
+int abs(int n) {
     if (n < 0)
         return -n;
     return n;

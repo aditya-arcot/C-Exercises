@@ -2,13 +2,11 @@
 
 #include <stdio.h>
 
-int main(void)
-{
+int main(void) {
     int ch, blanks, tabs, lines;
     blanks = tabs = lines = 0;
 
-    while ((ch = getchar()) != EOF)
-    {
+    while ((ch = getchar()) != EOF) {
         if (ch == ' ')
             ++blanks;
         else if (ch == '\t')

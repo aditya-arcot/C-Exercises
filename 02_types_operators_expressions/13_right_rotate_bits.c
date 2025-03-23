@@ -6,16 +6,13 @@ unsigned r_rotate_bits(unsigned x, int n);
 int int_length(void);
 void print_binary(unsigned x);
 
-int main(void)
-{
+int main(void) {
     printf("%u\n\n", r_rotate_bits(124, 4));
     printf("%u\n\n", r_rotate_bits(92, 5));
 }
 
-unsigned r_rotate_bits(unsigned x, int n)
-{
-    if (n < 0)
-    {
+unsigned r_rotate_bits(unsigned x, int n) {
+    if (n < 0) {
         printf("n cannot be less than 0\n");
         return 0;
     }
@@ -28,8 +25,7 @@ unsigned r_rotate_bits(unsigned x, int n)
     printf("int length:\t%d\n", length);
 
     n %= length;
-    if (n > 0)
-    {
+    if (n > 0) {
         unsigned ones = (unsigned)~0;
 
         // rightmost n bits of x with 0s to the left
@@ -53,8 +49,7 @@ unsigned r_rotate_bits(unsigned x, int n)
     return x;
 }
 
-int int_length(void)
-{
+int int_length(void) {
     int i;
     unsigned ones = (unsigned)~0;
     for (i = 1; (ones >>= 1) > 0; i++)
@@ -62,15 +57,12 @@ int int_length(void)
     return i;
 }
 
-void print_binary(unsigned x)
-{
+void print_binary(unsigned x) {
     int bits = sizeof(x) * 8;
-    for (int i = bits - 1; i >= 0; i--)
-    {
+    for (int i = bits - 1; i >= 0; i--) {
         unsigned bit = (x >> i) & 1;
         printf("%u", bit);
-        if (i % 4 == 0)
-        {
+        if (i % 4 == 0) {
             printf(" ");
         }
     }

@@ -5,20 +5,15 @@
 #define TRUE 1
 #define FALSE 0
 
-int main(void)
-{
+int main(void) {
     int ch, in_blank = FALSE;
 
-    while ((ch = getchar()) != EOF)
-    {
-        if (ch == ' ' || ch == '\t')
-        {
+    while ((ch = getchar()) != EOF) {
+        if (ch == ' ' || ch == '\t') {
             if (!in_blank)
                 putchar(' ');
             in_blank = TRUE;
-        }
-        else
-        {
+        } else {
             putchar(ch);
             in_blank = FALSE;
         }

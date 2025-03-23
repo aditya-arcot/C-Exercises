@@ -2,11 +2,9 @@
 
 #include <stdio.h>
 
-int main(void)
-{
+int main(void) {
     int ch, lines = 0;
-    while ((ch = getchar()) != EOF)
-    {
+    while ((ch = getchar()) != EOF) {
         if (ch == '\n')
             ++lines;
     }
