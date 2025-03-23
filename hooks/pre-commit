@@ -1,0 +1,23 @@
+#!/bin/bash
+
+STAGED_BASH_FILES=$(git diff --cached --name-only --diff-filter=AM | grep -E '\.sh$')
+if [ -n "$STAGED_BASH_FILES" ]; then
+    echo "Formatting Bash files"
+    echo "$STAGED_BASH_FILES" | xargs format_bash.sh
+    echo "$STAGED_BASH_FILES" | xargs git add
+    echo
+
+    set -e
+    echo "Linting Bash files"
+    echo "$STAGED_BASH_FILES" | xargs lint_bash.sh
+    echo
+    set +e
+fi
+
+STAGED_C_FILES=$(git diff --cached --name-only --diff-filter=AM | grep -E '\.c$')
+if [ -n "$STAGED_C_FILES" ]; then
+    echo "Formatting C files"
+    echo "$STAGED_C_FILES" | xargs format_c.sh
+    echo "$STAGED_C_FILES" | xargs git add
+    echo
+fi
