@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Stashing unstaged changes"
+git stash -k -m "pre-commit-stash"
+
 STAGED_BASH_FILES=$(git diff --cached --name-only --diff-filter=AM | grep -E '\.sh$')
 if [ -n "$STAGED_BASH_FILES" ]; then
     echo "Formatting Bash files"
