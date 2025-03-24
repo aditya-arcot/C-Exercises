@@ -14,7 +14,9 @@ separator() {
 }
 
 cleanup() {
-    printf "\nCaught interrupt signal. Removing %s" "$OUTFILE"
+    echo
+    separator
+    printf "Interrupt signal. Removing %s\n" "$OUTFILE"
     rm -f "$OUTFILE"
     exit 1
 }
