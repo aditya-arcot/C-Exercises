@@ -70,7 +70,7 @@ if [ "${#C_FILES[@]}" -eq 0 ]; then
 fi
 
 echo "Compiling files: ${C_FILES[*]} to $OUTFILE"
-if cc -Weverything -Wno-poison-system-directories -std=c17 -o "$OUTFILE" "${C_FILES[@]}"; then
+if cc -Weverything -Wno-poison-system-directories -Wno-declaration-after-statement -std=c17 -o "$OUTFILE" "${C_FILES[@]}"; then
     echo "Compilation successful"
     if $EXECUTE; then
         echo "Executing $OUTFILE:"
