@@ -32,7 +32,7 @@ int main(void) {
 
     printf("%s %s\n", "Fahrenheit", "Celsius");
     for (fahr = UPPER; fahr >= LOWER; fahr = fahr - STEP)
-        printf("%10d %7.1f\n", fahr, to_celsius(fahr));
+        printf("%-10d %-7.1f\n", fahr, to_celsius(fahr));
 }
 
 double to_celsius(int fahr) {

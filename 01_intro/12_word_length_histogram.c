@@ -1,14 +1,14 @@
 // print histogram of input word lengths between 1 and 10
 
+#include <stdbool.h>
 #include <stdio.h>
 
-#define TRUE 1
-#define FALSE 0
 #define MAXLEN 10
 
 int main(void) {
-    int ch, len = 0, in_word = FALSE;
+    int ch, len = 0;
     int counts[MAXLEN];
+    bool in_word = false;
 
     for (int i = 0; i < MAXLEN; ++i)
         counts[i] = 0;
@@ -18,10 +18,10 @@ int main(void) {
             if (in_word && len < MAXLEN)
                 ++counts[len - 1];
             len = 0;
-            in_word = FALSE;
+            in_word = false;
         } else {
             ++len;
-            in_word = TRUE;
+            in_word = true;
         }
     }
 

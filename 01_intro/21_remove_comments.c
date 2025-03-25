@@ -1,17 +1,13 @@
 // remove all comments from C program input
 
+#include <stdbool.h>
 #include <stdio.h>
 
-#define TRUE 1
-#define FALSE 0
-
-int ch = -1;
-
-int in_string = FALSE;
-int in_char = FALSE;
-int in_single_comment = FALSE;
-int in_multi_comment = FALSE;
-int escaped = FALSE;
+static int ch;
+static bool in_string = false;
+static bool in_char = false;
+static bool in_single_comment = false;
+static bool in_multi_comment = false;
 
 int handle_char(void);
 
@@ -26,7 +22,7 @@ int handle_char(void) {
     if (in_single_comment) {
         if (ch == '\n') {
             putchar(ch);
-            in_single_comment = FALSE;
+            in_single_comment = false;
         }
         return 0;
     }
@@ -38,26 +34,14 @@ int handle_char(void) {
                 return 1;
 
             if (ch == '/') {
-                in_multi_comment = FALSE;
+                in_multi_comment = false;
                 return 0;
             }
         }
         return 0;
     }
 
-    if (escaped) {
-        escaped = FALSE;
-        putchar(ch);
-        return 0;
-    }
-
-    if (ch == '\\') {
-        escaped = TRUE;
-        putchar(ch);
-        return 0;
-    }
-
-    if (ch == '"' && !escaped) {
+    if (ch == '"') {
         in_string = !in_string;
         putchar(ch);
         return 0;
@@ -68,7 +52,7 @@ int handle_char(void) {
         return 0;
     }
 
-    if (ch == '\'' && !escaped) {
+    if (ch == '\'') {
         in_char = !in_char;
         putchar(ch);
         return 0;
@@ -86,12 +70,12 @@ int handle_char(void) {
             return 1;
 
         if (ch == '/') {
-            in_single_comment = TRUE;
+            in_single_comment = true;
             return 0;
         }
 
         if (ch == '*') {
-            in_multi_comment = TRUE;
+            in_multi_comment = true;
             return 0;
         }
 

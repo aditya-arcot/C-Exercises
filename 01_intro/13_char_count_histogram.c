@@ -2,8 +2,8 @@
 
 #include <stdio.h>
 
-#define MINCHAR 33
-#define MAXCHAR 126
+#define MINCHAR '!' // 33
+#define MAXCHAR '~' // 126
 
 int main(void) {
     int ch, max_count = 0;

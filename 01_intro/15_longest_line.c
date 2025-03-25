@@ -5,8 +5,8 @@
 #define MAX_LINE_PREVIEW 50
 #define NULL_CHAR '\0'
 
-int max_len = 0;
-char longest_line[MAX_LINE_PREVIEW + 1];
+static int max_len = 0;
+static char longest_line[MAX_LINE_PREVIEW + 1];
 
 int get_line(char line[]);
 void copy(char from[], char to[]);
@@ -35,12 +35,10 @@ int main(void) {
 // read line into array, return length
 int get_line(char line[]) {
     int ch, col = 0;
-    while ((ch = getchar()) != EOF) {
+    while ((ch = getchar()) != EOF && ch != '\n') {
         if (col < MAX_LINE_PREVIEW)
-            line[col] = ch;
+            line[col] = (char)ch;
         ++col;
-        if (ch == '\n')
-            break;
     }
 
     // null-terminate string

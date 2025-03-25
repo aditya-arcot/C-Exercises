@@ -1,21 +1,20 @@
 // print input words separated by newlines
 
+#include <stdbool.h>
 #include <stdio.h>
 
-#define TRUE 1
-#define FALSE 0
-
 int main(void) {
-    int ch, in_word = FALSE;
+    int ch;
+    bool in_word = false;
 
     while ((ch = getchar()) != EOF) {
         if (ch == ' ' || ch == '\t' || ch == '\n') {
             if (in_word)
                 putchar('\n');
-            in_word = FALSE;
+            in_word = false;
         } else {
             putchar(ch);
-            in_word = TRUE;
+            in_word = true;
         }
     }
 

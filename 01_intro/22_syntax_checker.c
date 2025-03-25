@@ -26,10 +26,9 @@
         - Designed for simple C code syntax validation, not for full parsing or compilation
 */
 
+#include <stdbool.h>
 #include <stdio.h>
 
-#define TRUE 1
-#define FALSE 0
 #define ERROR 1
 #define SUCCESS 0
 #define NULL_CHAR '\0'
@@ -37,31 +36,31 @@
 #define MAX_BRACKETS_STACK_LENGTH 1000
 #define MAX_CHAR_LENGTH 2
 
-int debug = FALSE;
-int line = 1;
-int col = 1;
-int non_blank_line = FALSE;
-int directive_line = FALSE;
-int directive_name_done = FALSE;
-int directive_name_idx = 0;
-char directive_buffer[MAX_DIRECTIVE_NAME_LENGTH + 1];
-const char *valid_directives[] = {"define", "include", "if",    "ifdef", "ifndef",
-                                  "else",   "elif",    "endif", "undef", "pragma"};
-int brackets_stack_idx = 0;
-char brackets_stack[MAX_BRACKETS_STACK_LENGTH + 1];
-int in_single_comment = FALSE;
-int in_multi_comment = FALSE;
-int in_string = FALSE;
-int in_char = FALSE;
-int char_buffer_idx = 0;
-char char_buffer[MAX_CHAR_LENGTH + 1];
-int escaped = FALSE;
-const char valid_escapes[] = {'a', 'b', 'f', 'n', 'r', 't', 'v', '\\', '\'', '"', '?', '0'};
+static bool debug = false;
+static int line = 1;
+static int col = 1;
+static bool non_blank_line = false;
+static bool directive_line = false;
+static bool directive_name_done = false;
+static int directive_name_idx = 0;
+static char directive_buffer[MAX_DIRECTIVE_NAME_LENGTH + 1];
+static const char *valid_directives[] = {"define", "include", "if",    "ifdef", "ifndef",
+                                         "else",   "elif",    "endif", "undef", "pragma"};
+static int brackets_stack_idx = 0;
+static char brackets_stack[MAX_BRACKETS_STACK_LENGTH + 1];
+static bool in_single_comment = false;
+static bool in_multi_comment = false;
+static bool in_string = false;
+static bool in_char = false;
+static int char_buffer_idx = 0;
+static char char_buffer[MAX_CHAR_LENGTH + 1];
+static bool escaped = false;
+static const char valid_escapes[] = {'a', 'b', 'f', 'n', 'r', 't', 'v', '\\', '\'', '"', '?', '0'};
 
 int are_matching_strings(const char *a, const char *b);
 void print_syntax_err(void);
 int check_syntax(void);
-int handle_char(char ch);
+int handle_char(int ch);
 int perform_newline_checks(void);
 void move_to_new_line(void);
 int push_directive_name_char(char ch);
@@ -92,7 +91,7 @@ int main(void) {
 int are_matching_strings(const char *a, const char *b) {
     while (*a && *b) {
         if (*a != *b) {
-            return FALSE;
+            return false;
         }
         ++a;
         ++b;
@@ -138,7 +137,7 @@ int check_syntax(void) {
     return SUCCESS;
 }
 
-int handle_char(char ch) {
+int handle_char(int ch) {
     if (debug) {
         if (ch == '\n') {
             printf("line %-3d col %-3d [newline]\n", line, col);
@@ -153,7 +152,7 @@ int handle_char(char ch) {
 
     if (in_single_comment) {
         if (ch == '\n') {
-            in_single_comment = FALSE;
+            in_single_comment = false;
             move_to_new_line();
         }
         return SUCCESS;
@@ -161,7 +160,7 @@ int handle_char(char ch) {
 
     if (in_multi_comment) {
         if (ch == '*') {
-            ch = getchar();
+            ch = (char)getchar();
             if (ch == EOF) {
                 printf("Unclosed multi-line comment\n");
                 return ERROR;
@@ -174,7 +173,7 @@ int handle_char(char ch) {
                 return SUCCESS;
             }
             if (ch == '/') {
-                in_multi_comment = FALSE;
+                in_multi_comment = false;
                 return SUCCESS;
             }
         } else if (ch == '\n')
@@ -185,34 +184,34 @@ int handle_char(char ch) {
 
     if (escaped) {
         if (ch == '\n') {
-            escaped = FALSE;
+            escaped = false;
             if (in_char && pop_char())
                 return ERROR;
             move_to_new_line();
             return SUCCESS;
         }
-        if (in_char && push_char(ch))
+        if (in_char && push_char((char)ch))
             return ERROR;
-        if (!is_valid_escape(ch)) {
+        if (!is_valid_escape((char)ch)) {
             printf("Invalid escape sequence\n");
             return ERROR;
         }
-        escaped = FALSE;
-        non_blank_line = TRUE;
+        escaped = false;
+        non_blank_line = true;
         return SUCCESS;
     }
 
     if (ch == '\\') {
-        if (in_char && push_char(ch))
+        if (in_char && push_char((char)ch))
             return ERROR;
-        escaped = TRUE;
-        non_blank_line = TRUE;
+        escaped = true;
+        non_blank_line = true;
         return SUCCESS;
     }
 
     if (in_string) {
         if (ch == '"') {
-            in_string = FALSE;
+            in_string = false;
             return SUCCESS;
         }
         if (ch == '\n') {
@@ -224,7 +223,7 @@ int handle_char(char ch) {
 
     if (in_char) {
         if (ch == '\'') {
-            in_char = FALSE;
+            in_char = false;
             if (char_buffer_idx == 1) {
                 char_buffer_idx = 0;
                 return SUCCESS;
@@ -245,7 +244,7 @@ int handle_char(char ch) {
             printf("Unclosed character literal\n");
             return ERROR;
         }
-        return push_char(ch);
+        return push_char((char)ch);
     }
 
     if (ch == '\n') {
@@ -256,7 +255,7 @@ int handle_char(char ch) {
         return SUCCESS;
     } else if (ch == ' ' || ch == '\t') {
         if (directive_line && !directive_name_done && directive_name_idx > 0) {
-            directive_name_done = TRUE;
+            directive_name_done = true;
             if (!is_valid_directive()) {
                 print_invalid_directive_name_err();
                 return ERROR;
@@ -268,17 +267,17 @@ int handle_char(char ch) {
             printf("Invalid directive\n");
             return ERROR;
         }
-        non_blank_line = TRUE;
-        directive_line = TRUE;
+        non_blank_line = true;
+        directive_line = true;
         return SUCCESS;
     } else if (ch == '(' || ch == '{' || ch == '[') {
-        if (push_bracket(ch)) {
+        if (push_bracket((char)ch)) {
             return ERROR;
         }
-        non_blank_line = TRUE;
+        non_blank_line = true;
         return SUCCESS;
     } else if (ch == ')' || ch == '}' || ch == ']') {
-        char expected_bracket = get_opening_bracket(ch);
+        char expected_bracket = get_opening_bracket((char)ch);
         if (expected_bracket == ERROR)
             return ERROR;
 
@@ -291,10 +290,10 @@ int handle_char(char ch) {
             return ERROR;
         }
 
-        non_blank_line = TRUE;
+        non_blank_line = true;
         return SUCCESS;
     } else if (ch == '/') {
-        ch = getchar();
+        ch = (char)getchar();
         if (ch == EOF) {
             printf("Unexpected EOF\n");
             return ERROR;
@@ -307,29 +306,29 @@ int handle_char(char ch) {
         ++col;
 
         if (ch == '/') {
-            in_single_comment = TRUE;
+            in_single_comment = true;
             return SUCCESS;
         }
         if (ch == '*') {
-            in_multi_comment = TRUE;
+            in_multi_comment = true;
             return SUCCESS;
         }
 
-        non_blank_line = TRUE;
+        non_blank_line = true;
         return SUCCESS;
     } else if (ch == '"') {
-        non_blank_line = TRUE;
-        in_string = TRUE;
+        non_blank_line = true;
+        in_string = true;
         return SUCCESS;
     } else if (ch == '\'') {
-        non_blank_line = TRUE;
-        in_char = TRUE;
+        non_blank_line = true;
+        in_char = true;
         return SUCCESS;
     }
 
-    non_blank_line = TRUE;
+    non_blank_line = true;
 
-    if (directive_line && !directive_name_done && push_directive_name_char(ch)) {
+    if (directive_line && !directive_name_done && push_directive_name_char((char)ch)) {
         print_invalid_directive_name_err();
         return ERROR;
     }
@@ -348,9 +347,9 @@ int perform_newline_checks(void) {
 void move_to_new_line(void) {
     ++line;
     col = 1;
-    non_blank_line = FALSE;
-    directive_line = FALSE;
-    directive_name_done = FALSE;
+    non_blank_line = false;
+    directive_line = false;
+    directive_name_done = false;
     directive_name_idx = 0;
 }
 
@@ -378,10 +377,10 @@ int is_valid_directive(void) {
     size_t num_directives = sizeof(valid_directives) / sizeof(valid_directives[0]);
     for (size_t i = 0; i < num_directives; ++i) {
         if (are_matching_strings(directive_buffer, valid_directives[i])) {
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
 
 int push_bracket(char ch) {
@@ -448,8 +447,8 @@ int is_valid_escape(char escape) {
     size_t num_escapes = sizeof(valid_escapes) / sizeof(valid_escapes[0]);
     for (size_t i = 0; i < num_escapes; ++i) {
         if (escape == valid_escapes[i]) {
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }

@@ -16,10 +16,9 @@ int main(void) {
             col += spaces;
         } else {
             putchar(ch);
+            ++col;
             if (ch == '\n') {
                 col = 0;
-            } else {
-                ++col;
             }
         }
     }

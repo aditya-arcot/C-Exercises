@@ -36,10 +36,9 @@ int main(void) {
             // print non-space char
             putchar(ch);
 
+            ++col;
             if (ch == '\n') {
                 col = 0;
-            } else {
-                ++col;
             }
         }
     }
