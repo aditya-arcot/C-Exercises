@@ -2,29 +2,37 @@
 
 #include <stdio.h>
 
+void run_count_bits(unsigned x, int max_print_bits);
 int count_bits(unsigned x, int max_print_bits);
 void print_binary(unsigned x, int max_print_bits);
 
 int main(void) {
-    printf("%d\n\n", count_bits(104, 8));
-    printf("%d\n\n", count_bits(255, 8));
-    printf("%d\n\n", count_bits((unsigned)~0, 32));
+    run_count_bits(104, 8);
+    run_count_bits(255, 8);
+    run_count_bits((unsigned)~0, 32);
+}
+
+void run_count_bits(unsigned x, int max_print_bits) {
+    printf("result:\t%d\n", count_bits(x, max_print_bits));
+    for (int i = 0; i < 60; i++)
+        printf("-");
+    printf("\n");
 }
 
 int count_bits(unsigned x, int max_print_bits) {
-    printf("x:\t\t");
+    printf("x:\t");
     print_binary(x, max_print_bits);
     printf("\n");
 
-    // x-1 flips all bits right of the rightmost 1-bit (inclusive)
-    // x &= (x-1) results in 0s for all bits in this range
+    // x-1 flips bits starting at rightmost 1-bit and going right
+    // x &= (x-1) results in rightmost 1-bit being set to 0
     // process is repeated until x = 0
     // number of iterations is number of 1-bits
 
     int n = 0;
     while (x > 0) {
-        printf("iteration %d:\t", ++n);
         x &= (x - 1);
+        printf("%d:\t", ++n);
         print_binary(x, max_print_bits);
     }
     printf("\n");

@@ -7,15 +7,21 @@
 
 #include <stdio.h>
 
-static int max_print_bits = 8;
+static int max_print_bits = 12;
 
+void run_get_bits(unsigned x, int p, int n);
 unsigned get_bits(unsigned x, int p, int n);
 void print_binary(unsigned x);
 
 int main(void) {
-    printf("%u\n\n", get_bits(214, 4, 2));
-    printf("%u\n\n", get_bits(214, 7, 4));
-    printf("%u\n\n", get_bits(255, 5, 1));
+    run_get_bits(214, 4, 2);
+    run_get_bits(214, 7, 4);
+    run_get_bits(255, 5, 1);
+}
+
+void run_get_bits(unsigned x, int p, int n) {
+    printf("result:\t\t%u\n", get_bits(x, p, n));
+    printf("----------------------------------------\n");
 }
 
 unsigned get_bits(unsigned x, int p, int n) {
@@ -33,10 +39,10 @@ unsigned get_bits(unsigned x, int p, int n) {
     printf("p:\t\t%d\n", p);
     printf("n:\t\t%d\n\n", n);
 
-    unsigned ones = (unsigned)~0;
     // copy segment right bit position
     int shift = p + 1 - n;
 
+    unsigned ones = (unsigned)~0;
     // shift to get rid of bits right of segment
     x >>= shift;
     printf("shifted:\t");

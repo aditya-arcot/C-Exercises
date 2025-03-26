@@ -1,7 +1,9 @@
 /*
-    convert ASCII hexadecimal string to integer
+    convert ASCII positive hexadecimal string to integer
 
-    optional leading 0x or 0X
+    allow leading 0x or 0X
+    interpret digits until non-hex digit encountered
+    return integer value
 */
 
 #include <ctype.h>
@@ -9,50 +11,64 @@
 #include <stdio.h>
 
 int htoi(char s[]);
-int calculate_int(int n, int hex);
+int is_whitespace(int ch);
+int recalculate_int(int curr, int xdigit);
 
 int main(void) {
     char s[] = "0x1f";
     printf("%s - %d\n", s, htoi(s));
 
-    char s2[] = "FF";
+    char s2[] = " FF";
     printf("%s - %d\n", s2, htoi(s2));
 }
 
 int htoi(char s[]) {
+    bool start = true;
+
     int n = 0;
     bool prefix = true;
     for (int i = 0; s[i] != EOF; i++) {
-        int ch = s[i];
+        if (is_whitespace(s[i])) {
+            if (start)
+                continue;
+            else
+                return n;
+        }
+        start = false;
+
         if (prefix) {
             prefix = false;
             if (s[i] == '0') {
-                ch = s[++i];
-                if (ch == 'x' || ch == 'X')
+                ++i;
+                if (s[i] == 'x' || s[i] == 'X')
                     continue;
-                if (!isxdigit(ch))
+                if (!isxdigit(s[i]))
                     return n;
-                n = calculate_int(n, ch);
+                n = recalculate_int(n, s[i]);
                 continue;
             }
-            if (!isxdigit(ch))
+            if (!isxdigit(s[i]))
                 return n;
-            n = calculate_int(n, ch);
+            n = recalculate_int(n, s[i]);
             continue;
         }
-        if (!isxdigit(ch))
+        if (!isxdigit(s[i]))
             return n;
-        n = calculate_int(n, ch);
+        n = recalculate_int(n, s[i]);
     }
     return n;
 }
 
-int calculate_int(int n, int hex) {
-    if (!isxdigit(hex))
-        return n;
-    if (hex >= '0' && hex <= '9')
-        return n * 16 + (hex - '0');
-    if (hex >= 'a' && hex <= 'f')
-        return n * 16 + (hex - 'a' + 10);
-    return n * 16 + (hex - 'A' + 10);
+int is_whitespace(int ch) {
+    return ch == ' ' || ch == '\t' || ch == '\n';
+}
+
+int recalculate_int(int curr, int xdigit) {
+    if (!isxdigit(xdigit))
+        return curr;
+    if (xdigit >= '0' && xdigit <= '9')
+        return curr * 16 + (xdigit - '0');
+    if (xdigit >= 'a' && xdigit <= 'f')
+        return curr * 16 + (xdigit - 'a' + 10);
+    return curr * 16 + (xdigit - 'A' + 10);
 }

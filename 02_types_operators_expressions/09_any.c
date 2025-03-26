@@ -6,7 +6,7 @@ int any(char s1[], char s2[]);
 
 int main(void) {
     char s1[] = "hello, world!";
-    char s2[] = "aeiou";
+    char s2[] = "io l";
     printf("%d\n", any(s1, s2));
 }
 

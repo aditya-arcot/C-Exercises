@@ -8,15 +8,21 @@
 
 #include <stdio.h>
 
-static int max_print_bits = 8;
+static int max_print_bits = 12;
 
+void run_set_bits(unsigned x, unsigned y, int p, int n);
 unsigned set_bits(unsigned x, unsigned y, int p, int n);
 void print_binary(unsigned x);
 
 int main(void) {
-    printf("%u\n\n", set_bits(157, 42, 5, 3));
-    printf("%u\n\n", set_bits(145, 115, 6, 3));
-    printf("%u\n\n", set_bits(255, 0, 6, 2));
+    run_set_bits(157, 42, 5, 3);
+    run_set_bits(145, 115, 6, 3);
+    run_set_bits(255, 0, 6, 2);
+}
+
+void run_set_bits(unsigned x, unsigned y, int p, int n) {
+    printf("result:\t\t%u\n", set_bits(x, y, p, n));
+    printf("----------------------------------------\n");
 }
 
 unsigned set_bits(unsigned x, unsigned y, int p, int n) {
@@ -36,10 +42,10 @@ unsigned set_bits(unsigned x, unsigned y, int p, int n) {
     printf("p:\t\t%d\n", p);
     printf("n:\t\t%d\n\n", n);
 
-    unsigned ones = (unsigned)~0;
     // copy segment right bit position
     int shift = p + 1 - n;
 
+    unsigned ones = (unsigned)~0;
     // mask to 0 copy segment
     unsigned x_mask = ~((~(ones << n)) << shift);
     printf("x mask:\t\t");

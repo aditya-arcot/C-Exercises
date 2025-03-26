@@ -7,15 +7,21 @@
 
 #include <stdio.h>
 
-static int max_print_bits = 8;
+static int max_print_bits = 12;
 
+void run_invert_bits(unsigned x, int p, int n);
 unsigned invert_bits(unsigned x, int p, int n);
 void print_binary(unsigned x);
 
 int main(void) {
-    printf("%u\n\n", invert_bits(66, 4, 2));
-    printf("%u\n\n", invert_bits(0, 3, 1));
-    printf("%u\n\n", invert_bits(255, 7, 3));
+    run_invert_bits(66, 4, 2);
+    run_invert_bits(0, 3, 1);
+    run_invert_bits(255, 7, 3);
+}
+
+void run_invert_bits(unsigned x, int p, int n) {
+    printf("result:\t\t%u\n", invert_bits(x, p, n));
+    printf("----------------------------------------\n");
 }
 
 unsigned invert_bits(unsigned x, int p, int n) {
@@ -33,10 +39,10 @@ unsigned invert_bits(unsigned x, int p, int n) {
     printf("p:\t\t%d\n", p);
     printf("n:\t\t%d\n\n", n);
 
-    unsigned ones = (unsigned)~0;
     // copy segment right bit position
     int shift = p + 1 - n;
 
+    unsigned ones = (unsigned)~0;
     // mask with 1s in invert segment and 0s everywhere else
     unsigned mask = (~(ones << n)) << shift;
     printf("mask:\t\t");

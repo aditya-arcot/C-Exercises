@@ -2,13 +2,19 @@
 
 #include <stdio.h>
 
+void run_r_rotate_bits(unsigned x, int n);
 unsigned r_rotate_bits(unsigned x, int n);
 int int_length(void);
 void print_binary(unsigned x);
 
 int main(void) {
-    printf("%u\n\n", r_rotate_bits(124, 4));
-    printf("%u\n\n", r_rotate_bits(92, 5));
+    run_r_rotate_bits(124, 4);
+    run_r_rotate_bits(92, 5);
+}
+
+void run_r_rotate_bits(unsigned x, int n) {
+    printf("result:\t\t%u\n", r_rotate_bits(x, n));
+    printf("------------------------------------------------------------\n");
 }
 
 unsigned r_rotate_bits(unsigned x, int n) {
@@ -30,19 +36,21 @@ unsigned r_rotate_bits(unsigned x, int n) {
 
         // rightmost n bits of x with 0s to the left
         unsigned r_bits = (~(ones << n)) & x;
-        printf("right bits:\t");
+        printf("rbits:\t\t");
         print_binary(r_bits);
 
         // shift rightmost bits to leftmost position
         r_bits <<= (length - n);
-        printf("bits shifted:\t");
+        printf("rb shifted:\t");
         print_binary(r_bits);
 
         // shift x
         x >>= n;
+        printf("x shifted:\t");
+        print_binary(x);
 
         x |= r_bits;
-        printf("x | bits:\t");
+        printf("xs | rbs:\t");
         print_binary(x);
         printf("\n");
     }

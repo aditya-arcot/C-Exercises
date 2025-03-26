@@ -3,7 +3,8 @@
 #include <stdio.h>
 
 int main(void) {
-    printf("char\n");
+    printf("char - signed by default\n");
+    printf("------------------------\n");
     printf("signed char min:   %4d\n", SCHAR_MIN);
     printf("signed char max:   %4d\n", SCHAR_MAX);
     printf("char min:          %4d\n", CHAR_MIN);
@@ -12,7 +13,8 @@ int main(void) {
     printf("unsigned char max: %4d\n", UCHAR_MAX);
     printf("\n");
 
-    printf("int - signed is default\n");
+    printf("int - signed by default\n");
+    printf("-----------------------\n");
     printf("short min:              %20d\n", SHRT_MIN);
     printf("short max:              %20d\n", SHRT_MAX);
     printf("int min:                %20d\n", INT_MIN);
@@ -25,16 +27,17 @@ int main(void) {
     printf("unsigned short max:     %20u\n", USHRT_MAX);
     printf("unsigned int min:       %20u\n", 0);
     printf("unsigned int max:       %20u\n", UINT_MAX);
-    printf("unsigned long min:      %20d\n", 0);
+    printf("unsigned long min:      %20lu\n", 0UL);
     printf("unsigned long max:      %20lu\n", ULONG_MAX);
-    printf("unsigned long long min: %20d\n", 0);
+    printf("unsigned long long min: %20llu\n", 0ULL);
     printf("unsigned long long max: %20llu\n", ULLONG_MAX);
     printf("\n");
 
     printf("float\n");
-    printf("float min:           %15.8e\n", (float)FLT_MIN);
-    printf("float max:           %15.8e\n", (float)FLT_MAX);
-    printf("float epsilon:       %15.8e\n", (float)FLT_EPSILON);
+    printf("-----\n");
+    printf("float min:           %15.8e\n", (double)FLT_MIN);
+    printf("float max:           %15.8e\n", (double)FLT_MAX);
+    printf("float epsilon:       %15.8e\n", (double)FLT_EPSILON);
     printf("double min:          %15.8e\n", DBL_MIN);
     printf("double max:          %15.8e\n", DBL_MAX);
     printf("double epsilon:      %15.8e\n", DBL_EPSILON);

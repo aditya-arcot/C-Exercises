@@ -6,7 +6,7 @@ void filter(char s1[], char s2[]);
 
 int main(void) {
     char s1[] = "hello, world!";
-    char s2[] = "aeiou";
+    char s2[] = "eio l";
     filter(s1, s2);
     printf("%s\n", s1);
 }

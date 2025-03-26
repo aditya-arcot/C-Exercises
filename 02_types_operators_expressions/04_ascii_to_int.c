@@ -2,7 +2,7 @@
     convert ASCII positive integer string to integer
 
     skip leading whitespace
-    interpret digits until non-digit is encountered
+    interpret digits until non-digit encountered
     return integer value
 */
 
