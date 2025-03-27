@@ -6,32 +6,26 @@
 
 #define NULL_CHAR '\0'
 
+void run_itoa(int n, char s[], int min_width);
 void itoa(int n, char s[], int min_width);
 int abs(int n);
 void reverse(char s[]);
 
 int main(void) {
     char s[100];
-
-    itoa(-128, s, 5);
-    printf("%s\n", s);
-
-    itoa(0, s, 5);
-    printf("%s\n", s);
-
-    itoa(145, s, 5);
-    printf("%s\n", s);
-
-    itoa(-1, s, 5);
-    printf("%s\n", s);
-
+    run_itoa(-128, s, 4);
+    run_itoa(0, s, 2);
+    run_itoa(145, s, 5);
+    run_itoa(-1, s, 3);
     // -2147483647
-    itoa((1 << 31) + 1, s, 12);
-    printf("%s\n", s);
-
+    run_itoa((int)(1U << 31) + 1, s, 11);
     // -2147483648
-    itoa(1 << 31, s, 12);
-    printf("%s\n", s);
+    run_itoa((int)(1U << 31), s, 12);
+}
+
+void run_itoa(int n, char s[], int min_width) {
+    itoa(n, s, min_width);
+    printf("%12d -> %s\n", n, s);
 }
 
 void itoa(int n, char s[], int min_width) {

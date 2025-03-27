@@ -1,6 +1,4 @@
-// Write the function itob(n,s,b) that converts the integer n into a base b character
-// representation in the string s. In particular, itob(n,s,16) formats s as a hexadecimal integer in
-// s.
+// convert integer n into base b character representation in string s
 
 #include <limits.h>
 #include <stdbool.h>
@@ -9,27 +7,23 @@
 
 #define NULL_CHAR '\0'
 
+void run_itob(int n, char s[], int base);
 void itob(int n, char s[], int base);
 int abs(int n);
 void reverse(char s[]);
 
 int main(void) {
     char s[100];
+    run_itob(-255, s, 16);
+    run_itob(1024, s, 8);
+    run_itob(-5, s, 2);
+    run_itob((int)(1U << 31) + 1, s, 2);
+    run_itob((int)(1U << 31), s, 2);
+}
 
-    itob(-255, s, 16);
-    printf("%s\n", s);
-
-    itob(1024, s, 8);
-    printf("%s\n", s);
-
-    itob(-5, s, 2);
-    printf("%s\n", s);
-
-    itob((1 << 31) + 1, s, 2);
-    printf("%s\n", s);
-
-    itob(1 << 31, s, 2);
-    printf("%s\n", s);
+void run_itob(int n, char s[], int base) {
+    itob(n, s, base);
+    printf("%d to base %d -> %s\n", n, base, s);
 }
 
 void itob(int n, char s[], int base) {
