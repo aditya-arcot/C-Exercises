@@ -2,22 +2,22 @@
 
 #include <stdio.h>
 
+void run_print_int(int n);
 void print_int(int n);
 int abs(int n);
 
 int main(void) {
-    print_int(123);
-    printf("\n");
-
-    print_int(-123);
-    printf("\n");
-
+    run_print_int(123);
+    run_print_int(-123);
     // -2147483647
-    print_int((1 << 31) + 1);
-    printf("\n");
-
+    run_print_int((int)(1U << 31) + 1);
     // -2147483648
-    print_int(1 << 31);
+    run_print_int((int)(1U << 31));
+}
+
+void run_print_int(int n) {
+    printf("%d -> ", n);
+    print_int(n);
     printf("\n");
 }
 

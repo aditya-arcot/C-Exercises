@@ -3,20 +3,21 @@
 #include <stdio.h>
 #include <string.h>
 
-void reverse(char s[]);
-void _reverse(char s[], int left, int right);
+void run_reverse(char s[]);
+void reverse(char s[], int left, int right);
 
 int main(void) {
     char s[] = "abcde";
-    reverse(s);
+    run_reverse(s);
+}
+
+void run_reverse(char s[]) {
+    printf("%s -> ", s);
+    reverse(s, 0, (int)strlen(s) - 1);
     printf("%s\n", s);
 }
 
-void reverse(char s[]) {
-    _reverse(s, 0, (int)strlen(s) - 1);
-}
-
-void _reverse(char s[], int left, int right) {
+void reverse(char s[], int left, int right) {
     char temp;
 
     if (left >= right)
@@ -26,5 +27,5 @@ void _reverse(char s[], int left, int right) {
     s[left] = s[right];
     s[right] = temp;
 
-    _reverse(s, left + 1, right - 1);
+    reverse(s, left + 1, right - 1);
 }

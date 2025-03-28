@@ -23,8 +23,8 @@
 #endif
 
 int main(void) {
-    FOR(int i = 0; i < 100; i++) {
-        break;
+    FOR(int i = 0; i < 1; i++) {
+        continue;
     }
 
     INFINITE_FOR {
@@ -38,8 +38,8 @@ int main(void) {
 
     DEBUG_PRINT(i);
 
-    int ij = 10;
-    printf("%d\n", JOIN_TOKENS(i, j));
+    int abc = 10;
+    printf("%d\n", JOIN_TOKENS(a, bc));
 
-    DEBUG_PRINT(JOIN_TOKENS(i, j));
+    DEBUG_PRINT(JOIN_TOKENS(a, bc));
 }
