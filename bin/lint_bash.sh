@@ -7,10 +7,14 @@ fi
 
 for file in "$@"; do
     if [ -f "$file" ]; then
-        echo "Linting $file"
-        if ! shellcheck "$file"; then
-            printf "\nIssues found in %s\n" "$file"
-            exit 1
+        if [[ "$file" =~ \.sh$ ]]; then
+            echo "Linting $file"
+            if ! shellcheck "$file"; then
+                printf "\nIssues found in %s\n" "$file"
+                exit 1
+            fi
+        else
+            echo "File '$file' is not a Bash file"
         fi
     else
         echo "File '$file' not found"

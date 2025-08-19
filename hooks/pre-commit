@@ -17,7 +17,7 @@ if [ -n "$STAGED_BASH_FILES" ]; then
     set +e
 fi
 
-STAGED_C_FILES=$(git diff --cached --name-only --diff-filter=AM | grep -E '\.c$')
+STAGED_C_FILES=$(git diff --cached --name-only --diff-filter=AM | grep -E '\.(c|h)$')
 if [ -n "$STAGED_C_FILES" ]; then
     echo "Formatting C files"
     echo "$STAGED_C_FILES" | xargs format_c.sh

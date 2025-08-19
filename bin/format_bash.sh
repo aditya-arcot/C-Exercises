@@ -7,8 +7,12 @@ fi
 
 for file in "$@"; do
     if [ -f "$file" ]; then
-        echo "Formatting $file"
-        shfmt -w "$file"
+        if [[ "$file" =~ \.sh$ ]]; then
+            echo "Formatting $file"
+            shfmt -w "$file"
+        else
+            echo "File '$file' is not a Bash file"
+        fi
     else
         echo "File '$file' not found"
         exit 1
