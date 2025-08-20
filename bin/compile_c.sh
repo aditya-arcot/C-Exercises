@@ -1,12 +1,34 @@
 #!/bin/bash
 
+set -euo pipefail
+
+OUTFILE="program.out"
+EXECUTE=true
+PRESERVE=true
+SEPARATE=false
+OUTPUTS=()
+CFLAGS=(-std=c17 -Werror -Wall -Wextra -Wpedantic)
+
 show_help() {
-    echo "Usage: compile_c.sh [options] file1.c [file2.c ... fileN.c]"
-    echo ""
-    echo "Options:"
-    echo "  -n, --no-execute    Don't execute the compiled program"
-    echo "  -o, --output        Specify the output file name"
-    echo "  -h, --help          Display this help message"
+    cat <<EOF
+Usage: $(basename "$0") [options] file1.c [file2.c ...]
+
+Options:
+  -o, --output        Specify the output file name
+  -e, --no-execute    Don't execute the compiled program
+  -p, --no-preserve   Don't preserve the output files
+  -s, --separate      Compile each source file separately
+  -h, --help          Display this help message
+
+Examples:
+  $(basename "$0") -e -p -s file1.c file2.c
+  $(basename "$0") -o custom.out file1.c file2.c
+EOF
+}
+
+error() {
+    echo "Error: $*" >&2
+    exit 1
 }
 
 separator() {
@@ -14,76 +36,108 @@ separator() {
 }
 
 cleanup() {
+    if ! $PRESERVE; then
+        separator
+        echo "Cleaning up..."
+        for f in "${OUTPUTS[@]}"; do
+            if [[ -f "$f" ]]; then
+                echo "Removing $f"
+                rm -f "$f"
+            fi
+        done
+    fi
+}
+trap cleanup EXIT
+
+interrupt() {
     echo
     separator
-    printf "Interrupt signal. Removing %s\n" "$OUTFILE"
-    rm -f "$OUTFILE"
+    echo "Interrupt signal received"
+    cleanup
+    trap - EXIT
     exit 1
 }
 
-EXECUTE=true
-OUTFILE="program.out"
-
-while [[ "$1" == -* ]]; do
+while [[ $# -gt 0 && "$1" == -* ]]; do
     case $1 in
-        -n | --no-execute)
-            EXECUTE=false
-            ;;
         -o | --output)
             shift
             OUTFILE="$1"
             ;;
+        -e | --no-execute)
+            EXECUTE=false
+            ;;
+        -p | --no-preserve)
+            PRESERVE=false
+            ;;
+        -s | --separate)
+            SEPARATE=true
+            ;;
         -h | --help)
             show_help
-            exit
+            exit 0
             ;;
         *)
-            echo "Invalid option: $1"
-            show_help
-            exit 1
+            error "Invalid option: $1"
             ;;
     esac
     shift
 done
 
-if [ "$#" -lt 1 ]; then
-    echo "No files provided"
-    show_help
-    exit 1
-fi
-
 C_FILES=()
 for arg in "$@"; do
-    if [[ "$arg" =~ \.c$ ]]; then
-        C_FILES+=("$arg")
-    else
-        echo "Invalid file name: $arg"
-        show_help
-        exit 1
-    fi
+    [[ "$arg" =~ \.c$ ]] || error "Invalid file: $arg (must end in .c)"
+    [[ -f "$arg" ]] || error "File not found: $arg"
+    C_FILES+=("$arg")
 done
+[[ ${#C_FILES[@]} -gt 0 ]] || error "No .c files provided"
 
-if [ "${#C_FILES[@]}" -eq 0 ]; then
-    echo "No valid .c files provided"
-    show_help
-    exit 1
+if $SEPARATE && [[ "$OUTFILE" != "program.out" ]]; then
+    echo "Warning: --output is ignored when using --separate mode"
+    separator
 fi
 
-echo "Compiling files: ${C_FILES[*]} to $OUTFILE"
-if cc -Weverything -Wno-poison-system-directories -Wno-declaration-after-statement -std=c17 -o "$OUTFILE" "${C_FILES[@]}"; then
-    echo "Compilation successful"
-    if $EXECUTE; then
-        echo "Executing $OUTFILE:"
-        separator
-        trap cleanup SIGINT
-        "./$OUTFILE"
-        separator
-        echo "Execution finished. Removing $OUTFILE"
-        rm "$OUTFILE"
+compile_and_execute() {
+    local out="$1"
+    shift
+    local srcs=("$@")
+
+    echo "Compiling: ${srcs[*]} -> $out"
+    if cc "${CFLAGS[@]}" -o "$out" "${srcs[@]}"; then
+        echo "Compilation successful: $out"
+        OUTPUTS+=("$out")
+
+        if $EXECUTE; then
+            echo "Executing $out:"
+            separator
+            trap interrupt SIGINT
+            "./$out"
+            separator
+            echo "Execution finished: $out"
+        else
+            echo "Execution skipped"
+            if $PRESERVE; then
+                echo "Output preserved at $out"
+            fi
+        fi
     else
-        echo "Execution skipped. Preserving $OUTFILE"
+        error "Compilation failed: ${srcs[*]}"
     fi
+}
+
+if $SEPARATE; then
+    FIRST=true
+    for FILE in "${C_FILES[@]}"; do
+        BASE=$(basename "$FILE" .c)
+        OUTFILE="$BASE.out"
+
+        if ! $FIRST; then
+            separator
+        fi
+        FIRST=false
+
+        compile_and_execute "$OUTFILE" "$FILE"
+    done
 else
-    echo "Compilation failed"
-    exit 1
+    compile_and_execute "$OUTFILE" "${C_FILES[@]}"
 fi
