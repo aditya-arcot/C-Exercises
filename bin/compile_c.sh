@@ -7,7 +7,7 @@ EXECUTE=true
 PRESERVE=true
 SEPARATE=false
 OUTPUTS=()
-CFLAGS=(-std=c17 -Werror -Wall -Wextra -Wpedantic)
+CFLAGS=(-std=c17 -g -O0 -Werror -Wall -Wextra -Wpedantic)
 
 show_help() {
     cat << EOF

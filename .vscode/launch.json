@@ -2,12 +2,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug C",
+            "name": "Debug C File",
             "type": "lldb",
             "request": "launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}.out",
             "cwd": "${fileDirname}",
-            "preLaunchTask": "Compile C Program",
+            "program": "${fileDirname}/${fileBasenameNoExtension}.out",
+            "preLaunchTask": "Compile C File",
+            "initCommands": ["breakpoint set --name main"],
+            "postDebugTask": "Cleanup Files"
+        },
+        {
+            "name": "Debug C Folder",
+            "type": "lldb",
+            "request": "launch",
+            "cwd": "${fileDirname}",
+            "program": "${fileDirname}/program.out",
+            "preLaunchTask": "Compile C Folder",
+            "initCommands": ["breakpoint set --name main"],
             "postDebugTask": "Cleanup Files"
         }
     ]

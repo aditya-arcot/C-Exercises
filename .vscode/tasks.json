@@ -2,15 +2,30 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Compile C Program",
+            "label": "Compile C File",
             "type": "shell",
-            "command": "cc",
+            "command": "${workspaceFolder}/bin/compile_c.sh",
             "args": [
-                "-g",
-                "-Werror",
-                "${file}",
+                "-e",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}.out"
+                "${fileDirname}/${fileBasenameNoExtension}.out",
+                "${file}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "Compile C Folder",
+            "type": "shell",
+            "command": "${workspaceFolder}/bin/compile_c.sh",
+            "args": [
+                "-e",
+                "-o",
+                "${fileDirname}/program.out",
+                "${fileDirname}/*.c"
             ],
             "group": {
                 "kind": "build",
@@ -24,7 +39,7 @@
             "command": "sh",
             "args": [
                 "-c",
-                "rm ${fileDirname}/${fileBasenameNoExtension}.out && rm -r ${fileDirname}/${fileBasenameNoExtension}.out.dSYM",
+                "rm ${fileDirname}/*.out && rm -r ${fileDirname}/*.out.dSYM"
             ],
             "problemMatcher": []
         }
