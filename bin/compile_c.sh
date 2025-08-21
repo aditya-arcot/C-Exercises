@@ -10,7 +10,7 @@ OUTPUTS=()
 CFLAGS=(-std=c17 -Werror -Wall -Wextra -Wpedantic)
 
 show_help() {
-    cat <<EOF
+    cat << EOF
 Usage: $(basename "$0") [options] file1.c [file2.c ...]
 
 Options:
