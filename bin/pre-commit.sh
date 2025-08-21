@@ -38,3 +38,11 @@ if [ -n "$STAGED_C_FILES" ]; then
     echo "$STAGED_C_FILES" | xargs git add
     echo
 fi
+
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=AM || true)
+if [ -n "$STAGED_FILES" ]; then
+    echo "Formatting files with Prettier"
+    echo "$STAGED_FILES" | xargs npx -y prettier -w --ignore-unknown
+    echo "$STAGED_FILES" | xargs git add
+    echo
+fi
