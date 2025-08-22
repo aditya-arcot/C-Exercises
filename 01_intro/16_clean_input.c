@@ -13,11 +13,8 @@ int whitespace(char ch);
 int newline(char ch);
 
 int main(void) {
-    int ch;
-    bool ch_printed, in_whitespace;
-    ch_printed = in_whitespace = false;
-
-    while ((ch = getchar()) != EOF) {
+    bool ch_printed = false, in_whitespace = false;
+    for (int ch; (ch = getchar()) != EOF;) {
         if (whitespace((char)ch)) {
             if (!ch_printed)
                 continue;

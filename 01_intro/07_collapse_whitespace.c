@@ -4,10 +4,8 @@
 #include <stdio.h>
 
 int main(void) {
-    int ch;
     bool in_blank = false;
-
-    while ((ch = getchar()) != EOF) {
+    for (int ch; (ch = getchar()) != EOF;) {
         if (ch == ' ' || ch == '\t') {
             if (!in_blank)
                 putchar(' ');
@@ -17,6 +15,5 @@ int main(void) {
             in_blank = false;
         }
     }
-
     putchar('\n');
 }

@@ -7,9 +7,8 @@
 void print_spaces(int n);
 
 int main(void) {
-    int ch, col, spaces;
-    col = spaces = 0;
-    while ((ch = getchar()) != EOF) {
+    int col = 0, spaces = 0;
+    for (int ch; (ch = getchar()) != EOF;) {
         if (ch == ' ') {
             ++col;
             ++spaces; // buffer space

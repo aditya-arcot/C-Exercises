@@ -21,10 +21,9 @@ void move_to_next_line(void);
 int is_whitespace(char ch);
 
 int main(void) {
-    int ch;
     buffer[LINE_LENGTH] = NULL_CHAR;
 
-    while ((ch = getchar()) != EOF) {
+    for (int ch; (ch = getchar()) != EOF;) {
         handle_char((char)ch);
     }
 

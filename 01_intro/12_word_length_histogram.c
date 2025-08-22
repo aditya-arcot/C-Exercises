@@ -6,14 +6,13 @@
 #define MAXLEN 10
 
 int main(void) {
-    int ch, len = 0;
-    int counts[MAXLEN];
+    int len = 0, counts[MAXLEN];
     bool in_word = false;
 
     for (int i = 0; i < MAXLEN; ++i)
         counts[i] = 0;
 
-    while ((ch = getchar()) != EOF) {
+    for (int ch; (ch = getchar()) != EOF;) {
         if (ch == ' ' || ch == '\t' || ch == '\n') {
             if (in_word && len < MAXLEN)
                 ++counts[len - 1];

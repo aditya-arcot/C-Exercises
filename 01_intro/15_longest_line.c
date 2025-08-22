@@ -12,10 +12,9 @@ int get_line(char line[]);
 void copy(char from[], char to[]);
 
 int main(void) {
-    int len = 0;
     char line[MAX_LINE_PREVIEW + 1];
 
-    while ((len = get_line(line)) > 0) {
+    for (int len = 0; (len = get_line(line)) > 0;) {
         // latest line for tie
         if (len >= max_len) {
             max_len = len;
@@ -34,8 +33,8 @@ int main(void) {
 
 // read line into array, return length
 int get_line(char line[]) {
-    int ch, col = 0;
-    while ((ch = getchar()) != EOF && ch != '\n') {
+    int col = 0;
+    for (int ch; (ch = getchar()) != EOF && ch != '\n';) {
         if (col < MAX_LINE_PREVIEW)
             line[col] = (char)ch;
         ++col;

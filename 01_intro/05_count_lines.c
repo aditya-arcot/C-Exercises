@@ -3,8 +3,8 @@
 #include <stdio.h>
 
 int main(void) {
-    int ch, lines = 0;
-    while ((ch = getchar()) != EOF) {
+    int lines = 0;
+    for (int ch; (ch = getchar()) != EOF;) {
         if (ch == '\n')
             ++lines;
     }

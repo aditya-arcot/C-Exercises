@@ -16,9 +16,8 @@ int main(void) {
 }
 
 int binary_search(int x, int arr[], int n) {
-    int low = 0, mid, high = n - 1;
-    while (low <= high) {
-        mid = (low + high) / 2;
+    for (int low = 0, high = n - 1; low <= high;) {
+        int mid = (low + high) / 2;
         if (x == arr[mid])
             return mid;
         if (x < arr[mid])

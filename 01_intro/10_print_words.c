@@ -4,10 +4,8 @@
 #include <stdio.h>
 
 int main(void) {
-    int ch;
     bool in_word = false;
-
-    while ((ch = getchar()) != EOF) {
+    for (int ch; (ch = getchar()) != EOF;) {
         if (ch == ' ' || ch == '\t' || ch == '\n') {
             if (in_word)
                 putchar('\n');
@@ -17,6 +15,5 @@ int main(void) {
             in_word = true;
         }
     }
-
     putchar('\n');
 }

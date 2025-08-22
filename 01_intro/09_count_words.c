@@ -4,10 +4,9 @@
 #include <stdio.h>
 
 int main(void) {
-    int ch, words = 0;
+    int words = 0;
     bool in_word = false;
-
-    while ((ch = getchar()) != EOF) {
+    for (int ch; (ch = getchar()) != EOF;) {
         if (ch == ' ' || ch == '\t' || ch == '\n') {
             in_word = false;
         } else if (!in_word) {
@@ -15,6 +14,5 @@ int main(void) {
             in_word = true;
         }
     }
-
     printf("%d words\n", words);
 }

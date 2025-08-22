@@ -90,9 +90,8 @@ int main(void) {
 
 int are_matching_strings(const char *a, const char *b) {
     while (*a && *b) {
-        if (*a != *b) {
+        if (*a != *b)
             return false;
-        }
         ++a;
         ++b;
     }
@@ -104,8 +103,7 @@ void print_syntax_err(void) {
 }
 
 int check_syntax(void) {
-    int ch;
-    while ((ch = getchar()) != EOF) {
+    for (int ch; (ch = getchar()) != EOF;) {
         ++col;
         if (handle_char(ch))
             return ERROR;

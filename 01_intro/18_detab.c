@@ -7,8 +7,8 @@
 void print_spaces(int n);
 
 int main(void) {
-    int ch, col = 0;
-    while ((ch = getchar()) != EOF) {
+    int col = 0;
+    for (int ch; (ch = getchar()) != EOF;) {
         if (ch == '\t') {
             // print spaces till next tab stop
             int spaces = TAB_WIDTH - (col % TAB_WIDTH);

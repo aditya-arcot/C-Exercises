@@ -10,17 +10,16 @@ int get_line(char line[]);
 void reverse(char line[], int len);
 
 int main(void) {
-    int len = 0;
     char line[MAX_LINE + 1];
-    while ((len = get_line(line)) > 0)
+    for (int len = 0; (len = get_line(line)) > 0;)
         reverse(line, len);
 }
 
 int get_line(char line[]) {
-    int ch, col = 0;
+    int col = 0;
     bool overflow = false;
 
-    while ((ch = getchar()) != EOF && ch != '\n') {
+    for (int ch; (ch = getchar()) != EOF && ch != '\n';) {
         if (col == MAX_LINE) {
             overflow = true;
             break;
@@ -29,7 +28,7 @@ int get_line(char line[]) {
     }
 
     if (overflow) {
-        while ((ch = getchar()) != EOF && ch != '\n')
+        for (int ch; (ch = getchar()) != EOF && ch != '\n';)
             ;
         printf("Truncating input to %d characters\n", MAX_LINE);
     }

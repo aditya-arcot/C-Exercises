@@ -55,10 +55,8 @@ int abs(int n) {
 }
 
 void reverse(char s[]) {
-    int i, j;
-    char ch;
-    for (i = 0, j = (int)strlen(s) - 1; i < j; i++, j--) {
-        ch = s[i];
+    for (int i = 0, j = (int)strlen(s) - 1; i < j; i++, j--) {
+        char ch = s[i];
         s[i] = s[j];
         s[j] = ch;
     }

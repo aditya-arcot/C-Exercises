@@ -29,7 +29,6 @@ static void print_use_help_msg(void);
 static void print_help_msg(void);
 
 int main(void) {
-    int len;
     char line[MAX_LINE_LENGTH + 1];
 
     init_stack();
@@ -37,7 +36,7 @@ int main(void) {
     print_help_msg();
     printf("\n\n");
 
-    while ((len = get_line(line, MAX_LINE_LENGTH)) != EOF) {
+    for (int len; (len = get_line(line, MAX_LINE_LENGTH)) != EOF;) {
         handle_line(line, len);
     }
     printf("Exiting...\n");
@@ -46,9 +45,8 @@ int main(void) {
 // populate char array with line from standard input
 // return line length
 int get_line(char line[], int max_len) {
-    int ch, i;
+    int ch = 0, i = 0;
     bool blank = true;
-    ch = i = 0;
 
     while (max_len-- > 0 && (ch = getchar()) != EOF && ch != NEWLINE_CHAR)
         // exclude leading blanks
@@ -64,7 +62,7 @@ int get_line(char line[], int max_len) {
 
     // skip remaining line
     if (max_len < 0) {
-        while ((ch = getchar()) != EOF && ch != NEWLINE_CHAR)
+        for (int ch; (ch = getchar()) != EOF && ch != NEWLINE_CHAR;)
             ;
         printf("Warning: input line was trunctated to %s\n", line);
     }

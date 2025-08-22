@@ -3,11 +3,10 @@
 #include <stdio.h>
 
 int main(void) {
-    int c;
     printf("Enter characters (end using Ctrl+D):\n");
-    while ((c = getchar()) != EOF) {
-        putchar(c);
-        if (c != '\n')
+    for (int ch; (ch = getchar()) != EOF;) {
+        putchar(ch);
+        if (ch != '\n')
             putchar(' ');
     }
     putchar('\n');

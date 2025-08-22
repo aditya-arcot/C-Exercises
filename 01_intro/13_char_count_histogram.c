@@ -6,13 +6,13 @@
 #define MAXCHAR '~' // 126
 
 int main(void) {
-    int ch, max_count = 0;
+    int max_count = 0;
     int counts[MAXCHAR - MINCHAR + 1];
 
     for (int i = 0; i < MAXCHAR - MINCHAR + 1; ++i)
         counts[i] = 0;
 
-    while ((ch = getchar()) != EOF) {
+    for (int ch; (ch = getchar()) != EOF;) {
         if (ch >= MINCHAR && ch <= MAXCHAR) {
             int new_count = ++counts[ch - MINCHAR];
             if (new_count > max_count)

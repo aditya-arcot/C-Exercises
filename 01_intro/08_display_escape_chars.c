@@ -3,8 +3,7 @@
 #include <stdio.h>
 
 int main(void) {
-    int ch;
-    while ((ch = getchar()) != EOF) {
+    for (int ch; (ch = getchar()) != EOF;) {
         if (ch == '\t')
             printf("<\\t>");
         else if (ch == '\b')

@@ -3,10 +3,8 @@
 #include <stdio.h>
 
 int main(void) {
-    int ch, blanks, tabs, lines;
-    blanks = tabs = lines = 0;
-
-    while ((ch = getchar()) != EOF) {
+    int blanks = 0, tabs = 0, lines = 0;
+    for (int ch; (ch = getchar()) != EOF;) {
         if (ch == ' ')
             ++blanks;
         else if (ch == '\t')
@@ -14,6 +12,5 @@ int main(void) {
         else if (ch == '\n')
             ++lines;
     }
-
     printf("%d lines, %d blanks, %d tabs\n", lines, blanks, tabs);
 }

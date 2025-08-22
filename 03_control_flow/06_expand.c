@@ -17,11 +17,8 @@ int main(void) {
 }
 
 void expand(char s1[], char s2[]) {
-    int i, j;
-    char ch;
-
-    i = j = 0;
-    while ((ch = s1[i++]) != NULL_CHAR) {
+    int i = 0, j = 0;
+    for (int ch; (ch = s1[i++]) != NULL_CHAR;) {
         if (s1[i] == '-' && s1[i + 1] >= ch) {
             while (ch <= s1[i + 1])
                 s2[j++] = ch++;

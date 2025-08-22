@@ -42,7 +42,7 @@ int get_line(char line[], int max) {
 
     // skip remaining characters in line
     if (max < 0)
-        while ((ch = getchar()) != EOF && ch != '\n')
+        for (int ch; (ch = getchar()) != EOF && ch != '\n';)
             ;
 
     // return length
