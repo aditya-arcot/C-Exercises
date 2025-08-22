@@ -1,17 +1,15 @@
 /*
-    invert n bits of unsigned int x starting at position p
+    invert n_bits bits of unsigned int x starting at position p_left
 
-    p is leftmost position of desired portion
-    position is right to left with 0 as rightmost bit
+    p_left is leftmost position of desired segment
+    position is measured right to left with 0 as rightmost bit
 */
 
+#include "../utils.h"
 #include <stdio.h>
 
-static int max_print_bits = 12;
-
-void run_invert_bits(unsigned x, int p, int n);
-unsigned invert_bits(unsigned x, int p, int n);
-void print_binary(unsigned x);
+void run_invert_bits(unsigned x, int p_left, int n_bits);
+unsigned invert_bits(unsigned x, int p_left, int n_bits);
 
 int main(void) {
     run_invert_bits(66, 4, 2);
@@ -19,56 +17,40 @@ int main(void) {
     run_invert_bits(255, 7, 3);
 }
 
-void run_invert_bits(unsigned x, int p, int n) {
-    printf("result:\t\t%u\n", invert_bits(x, p, n));
+void run_invert_bits(unsigned x, int p_left, int n_bits) {
+    printf("result:\t\t%u\n", invert_bits(x, p_left, n_bits));
     printf("----------------------------------------\n");
 }
 
-unsigned invert_bits(unsigned x, int p, int n) {
-    if (p < 0) {
-        printf("p cannot be less than 0\n");
+unsigned invert_bits(unsigned x, int p_left, int n_bits) {
+    if (p_left < 0) {
+        printf("p_left cannot be less than 0\n");
         return 0;
     }
-    if (n < 1) {
-        printf("n cannot be less than 1\n");
+    if (n_bits < 1) {
+        printf("n_bits cannot be less than 1\n");
         return 0;
     }
 
     printf("x:\t\t");
-    print_binary(x);
-    printf("p:\t\t%d\n", p);
-    printf("n:\t\t%d\n\n", n);
+    print_binary_truncated(x);
+    printf("p_left:\t\t%d\n", p_left);
+    printf("n_bits:\t\t%d\n\n", n_bits);
 
-    // copy segment right bit position
-    int shift = p + 1 - n;
+    // rightmost bit position of segment
+    int p_right = p_left + 1 - n_bits;
 
     unsigned ones = (unsigned)~0;
-    // mask with 1s in invert segment and 0s everywhere else
-    unsigned mask = (~(ones << n)) << shift;
+    // contains 1s in segment & 0s outside
+    unsigned mask = (~(ones << n_bits)) << p_right;
     printf("mask:\t\t");
-    print_binary(mask);
+    print_binary_truncated(mask);
 
-    // xor inverts A when B is 1 (in invert segment)
+    // xor inverts x where mask is 1 (in segment)
     x ^= mask;
     printf("x ^ mask:\t");
-    print_binary(x);
+    print_binary_truncated(x);
     printf("\n");
 
     return x;
-}
-
-void print_binary(unsigned x) {
-    int bits = sizeof(x) * 8;
-    if (bits > max_print_bits) {
-        bits = max_print_bits;
-        printf("... ");
-    }
-    for (int i = bits - 1; i >= 0; i--) {
-        unsigned bit = (x >> i) & 1;
-        printf("%u", bit);
-        if (i % 4 == 0) {
-            printf(" ");
-        }
-    }
-    printf("(%u)\n", x);
 }

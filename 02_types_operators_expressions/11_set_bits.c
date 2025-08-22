@@ -1,18 +1,16 @@
 /*
-    set n bits of unsigned int x starting at position p
-        to rightmost n bits of unsigned int y
+    set n_bits bits of unsigned int x starting at position p_left
+        to rightmost n_bits bits of unsigned int y
 
-    p is leftmost position of desired portion
-    position is right to left with 0 as rightmost bit
+    p_left is leftmost position of desired segment
+    position is measured right to left with 0 as rightmost bit
 */
 
+#include "../utils.h"
 #include <stdio.h>
 
-static int max_print_bits = 12;
-
-void run_set_bits(unsigned x, unsigned y, int p, int n);
-unsigned set_bits(unsigned x, unsigned y, int p, int n);
-void print_binary(unsigned x);
+void run_set_bits(unsigned x, unsigned y, int p_left, int n_bits);
+unsigned set_bits(unsigned x, unsigned y, int p_left, int n_bits);
 
 int main(void) {
     run_set_bits(157, 42, 5, 3);
@@ -20,76 +18,63 @@ int main(void) {
     run_set_bits(255, 0, 6, 2);
 }
 
-void run_set_bits(unsigned x, unsigned y, int p, int n) {
-    printf("result:\t\t%u\n", set_bits(x, y, p, n));
+void run_set_bits(unsigned x, unsigned y, int p_left, int n_bits) {
+    printf("result:\t\t%u\n", set_bits(x, y, p_left, n_bits));
     printf("----------------------------------------\n");
 }
 
-unsigned set_bits(unsigned x, unsigned y, int p, int n) {
-    if (p < 0) {
-        printf("p cannot be less than 0\n");
+unsigned set_bits(unsigned x, unsigned y, int p_left, int n_bits) {
+    if (p_left < 0) {
+        printf("p_left cannot be less than 0\n");
         return 0;
     }
-    if (n < 1) {
-        printf("n cannot be less than 1\n");
+    if (n_bits < 1) {
+        printf("n_bits cannot be less than 1\n");
         return 0;
     }
 
     printf("x:\t\t");
-    print_binary(x);
+    print_binary_truncated(x);
     printf("y:\t\t");
-    print_binary(y);
-    printf("p:\t\t%d\n", p);
-    printf("n:\t\t%d\n\n", n);
+    print_binary_truncated(y);
+    printf("p_left:\t\t%d\n", p_left);
+    printf("n_bits:\t\t%d\n\n", n_bits);
 
-    // copy segment right bit position
-    int shift = p + 1 - n;
+    // rightmost bit position of copy segment in x
+    int p_right = p_left + 1 - n_bits;
 
     unsigned ones = (unsigned)~0;
-    // mask to 0 copy segment
-    unsigned x_mask = ~((~(ones << n)) << shift);
+    // contains 0s in copy segment of x
+    unsigned x_mask = ~((~(ones << n_bits)) << p_right);
     printf("x mask:\t\t");
-    print_binary(x_mask);
+    print_binary_truncated(x_mask);
 
+    // clear copy segment bits in x
     x &= x_mask;
-    // x now contains 0 in copy segment and original bits everywhere else
     printf("x masked:\t");
-    print_binary(x);
+    print_binary_truncated(x);
 
-    // mask to 0 left of rightmost n bits
-    unsigned y_mask = ~(ones << n);
+    // contains 0s left of copy segment in y
+    unsigned y_mask = ~(ones << n_bits);
     printf("y mask:\t\t");
-    print_binary(y_mask);
+    print_binary_truncated(y_mask);
 
+    // clear bits left of copy segment in y
     y &= y_mask;
     printf("y masked:\t");
-    print_binary(y);
+    print_binary_truncated(y);
 
-    y <<= shift;
+    // shift to reposition copy segment in y
+    y <<= p_right;
     // y now contains rightmost n bits in copy segment and 0 everywhere else
     printf("y shifted:\t");
-    print_binary(y);
+    print_binary_truncated(y);
 
+    // select bits from x outside of copy segment & bits from y inside copy segment
     x |= y;
     printf("x | y:\t\t");
-    print_binary(x);
+    print_binary_truncated(x);
     printf("\n");
 
     return x;
-}
-
-void print_binary(unsigned x) {
-    int bits = sizeof(x) * 8;
-    if (bits > max_print_bits) {
-        bits = max_print_bits;
-        printf("... ");
-    }
-    for (int i = bits - 1; i >= 0; i--) {
-        unsigned bit = (x >> i) & 1;
-        printf("%u", bit);
-        if (i % 4 == 0) {
-            printf(" ");
-        }
-    }
-    printf("(%u)\n", x);
 }
