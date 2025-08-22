@@ -9,7 +9,8 @@
                 "-e",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}.out",
-                "${file}"
+                "${file}",
+                "utils.c"
             ],
             "group": {
                 "kind": "build",
@@ -25,7 +26,8 @@
                 "-e",
                 "-o",
                 "${fileDirname}/program.out",
-                "${fileDirname}/*.c"
+                "${fileDirname}/*.c",
+                "utils.c"
             ],
             "group": {
                 "kind": "build",
