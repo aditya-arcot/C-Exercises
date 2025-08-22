@@ -41,7 +41,7 @@
             "command": "sh",
             "args": [
                 "-c",
-                "rm ${fileDirname}/*.out && rm -r ${fileDirname}/*.out.dSYM"
+                "rm -f ${fileDirname}/*.out && rm -rf ${fileDirname}/*.out.dSYM"
             ],
             "problemMatcher": []
         }
