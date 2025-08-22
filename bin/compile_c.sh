@@ -44,6 +44,10 @@ cleanup() {
                 echo "Removing $f"
                 rm -f "$f"
             fi
+            if [[ -d "$f.dSYM" ]]; then
+                echo "Removing $f.dSYM"
+                rm -rf "$f.dSYM"
+            fi
         done
     fi
 }
