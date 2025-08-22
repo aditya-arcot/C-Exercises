@@ -4,13 +4,13 @@ set -euo pipefail
 
 STASHED=false
 
-cleanup() {
+cleanup_on_fail() {
     if $STASHED; then
-        echo "Restoring stashed changes"
+        echo "Restoring stashed changes (pre-commit)"
         git stash pop -q
     fi
 }
-trap cleanup EXIT
+trap cleanup_on_fail ERR INT TERM
 
 echo "Checking for unstaged changes"
 if ! git diff --quiet; then
@@ -44,5 +44,11 @@ if [ -n "$STAGED_FILES" ]; then
     echo "Formatting files with Prettier"
     echo "$STAGED_FILES" | xargs npx -y prettier -w --ignore-unknown
     echo "$STAGED_FILES" | xargs git add
+    echo
+fi
+
+if $STASHED; then
+    echo "Creating stashed flag file"
+    touch .git/pre_commit_stashed
     echo
 fi
