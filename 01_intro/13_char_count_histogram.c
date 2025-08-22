@@ -20,15 +20,14 @@ int main(void) {
         }
     }
 
-    // printf("\nCharacter Histogram - Horizontal\n");
-    // for (int i = 0; i < MAXCHAR - MINCHAR + 1; ++i)
-    // {
-    //     printf("%c: ", MINCHAR + i);
-    //     for (int j = 0; j < counts[i]; ++j)
-    //         printf("=");
-    //     printf("\n");
-    // }
-    // printf("\n");
+    printf("\nCharacter Histogram - Horizontal\n");
+    for (int i = 0; i < MAXCHAR - MINCHAR + 1; ++i) {
+        printf("%c: ", MINCHAR + i);
+        for (int j = 0; j < counts[i]; ++j)
+            printf("=");
+        printf("\n");
+    }
+    printf("\n");
 
     printf("\nCharacter Histogram - Vertical\n");
     for (int i = max_count; i > 0; --i) {
