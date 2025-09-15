@@ -6,7 +6,8 @@
 double power(int base, int exp);
 
 int main(void) {
-    int range = 4, col_width = 10;
+    const int range = 4;
+    const int col_width = 10;
 
     // list of exponents
     printf("%5s", "");

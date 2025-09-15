@@ -75,8 +75,7 @@ void handle_char(char ch) {
 
     // partial/empty buffer
     // add char to buffer
-    buffer[buffer_idx] = ch;
-    ++buffer_idx;
+    buffer[buffer_idx++] = ch;
 }
 
 void handle_newline(void) {

@@ -44,8 +44,6 @@ int main(void) {
 }
 
 void print_spaces(int n) {
-    while (n > 0) {
+    while ((n--) > 0)
         putchar(' ');
-        --n;
-    }
 }
