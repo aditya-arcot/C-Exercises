@@ -39,7 +39,7 @@ cleanup() {
     if ! $PRESERVE; then
         separator
         echo "Cleaning up..."
-        for f in "${OUTPUTS[@]}"; do
+        for f in "${OUTPUTS[@]-}"; do
             if [[ -f "$f" ]]; then
                 echo "Removing $f"
                 rm -f "$f"
