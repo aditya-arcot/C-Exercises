@@ -491,5 +491,5 @@ void print_help_msg(void) {
            "\n"
            "Example:\n"
            "    Input: 3 4 + 5 * !pr\n"
-           "    Output: Stack: 35);\n");
+           "    Output: Stack: 35\n");
 }
