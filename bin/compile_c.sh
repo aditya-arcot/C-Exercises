@@ -8,6 +8,9 @@ PRESERVE=true
 SEPARATE=false
 OUTPUTS=()
 CFLAGS=(-std=c17 -g -O0 -Werror -Wall -Wextra -Wpedantic)
+COMP_START=false
+COMP_COUNT=0
+COMP_ERR_COUNT=0
 
 show_help() {
     cat << EOF
@@ -31,24 +34,36 @@ error() {
     exit 1
 }
 
+compilation_error() {
+    echo "Compilation Error: $*" >&2
+    COMP_ERR_COUNT=$((COMP_ERR_COUNT + 1))
+}
+
 separator() {
     printf '%*s\n' "$(tput cols)" '' | tr ' ' '='
 }
 
 cleanup() {
-    if ! $PRESERVE; then
+    if $COMP_START; then
+        if ! $PRESERVE; then
+            separator
+            echo "Cleaning up..."
+            for f in "${OUTPUTS[@]-}"; do
+                if [[ -f "$f" ]]; then
+                    echo "Removing $f"
+                    rm -f "$f"
+                fi
+                if [[ -d "$f.dSYM" ]]; then
+                    echo "Removing $f.dSYM"
+                    rm -rf "$f.dSYM"
+                fi
+            done
+        fi
         separator
-        echo "Cleaning up..."
-        for f in "${OUTPUTS[@]-}"; do
-            if [[ -f "$f" ]]; then
-                echo "Removing $f"
-                rm -f "$f"
-            fi
-            if [[ -d "$f.dSYM" ]]; then
-                echo "Removing $f.dSYM"
-                rm -rf "$f.dSYM"
-            fi
-        done
+        echo "Finished after $COMP_COUNT compilation(s) with $COMP_ERR_COUNT error(s)"
+        if [[ $COMP_ERR_COUNT -gt 0 ]]; then
+            exit 1
+        fi
     fi
 }
 trap cleanup EXIT
@@ -101,10 +116,13 @@ if $SEPARATE && [[ "$OUTFILE" != "program.out" ]]; then
     separator
 fi
 
+COMP_START=true
+
 compile_and_execute() {
     local out="$1"
     shift
     local srcs=("$@")
+    COMP_COUNT=$((COMP_COUNT + 1))
 
     echo "Compiling: ${srcs[*]} -> $out"
     if cc "${CFLAGS[@]}" -o "$out" "${srcs[@]}"; then
@@ -125,7 +143,7 @@ compile_and_execute() {
             fi
         fi
     else
-        error "Compilation failed: ${srcs[*]}"
+        compilation_error "Compilation failed: ${srcs[*]}"
     fi
 }
 
