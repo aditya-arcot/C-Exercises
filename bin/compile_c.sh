@@ -133,9 +133,17 @@ compile_and_execute() {
             echo "Executing $out:"
             separator
             trap interrupt SIGINT
+
+            set +e
             "./$out"
+            exit_code=$?
+            set -e
             separator
-            echo "Execution finished: $out"
+
+            echo "Execution finished"
+            if [[ $exit_code -ne 0 ]]; then
+                compilation_error "Exit code $exit_code"
+            fi
         else
             echo "Execution skipped"
             if $PRESERVE; then
