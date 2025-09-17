@@ -1,6 +1,6 @@
 // right rotate bits of unsigned int x by n_bits bits
 
-#include "../utils.h"
+#include "../utils/binary_utils.h"
 #include <stdio.h>
 
 void run_r_rotate_bits(unsigned x, int n_bits);

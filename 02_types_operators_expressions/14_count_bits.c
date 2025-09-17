@@ -1,6 +1,6 @@
 // count 1-bits in unsigned int x
 
-#include "../utils.h"
+#include "../utils/binary_utils.h"
 #include <stdio.h>
 
 void run_count_bits(unsigned x);

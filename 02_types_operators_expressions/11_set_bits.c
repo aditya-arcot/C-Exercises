@@ -6,7 +6,7 @@
     position is measured right to left with 0 as rightmost bit
 */
 
-#include "../utils.h"
+#include "../utils/binary_utils.h"
 #include <stdio.h>
 
 void run_set_bits(unsigned x, unsigned y, int p_left, int n_bits);
