@@ -6,6 +6,7 @@ OUTFILE="program.out"
 EXECUTE=true
 PRESERVE=true
 SEPARATE=false
+ARGS=()
 OUTPUTS=()
 CFLAGS=(-std=c17 -g -O0 -Werror -Wall -Wextra -Wpedantic)
 COMP_START=false
@@ -21,6 +22,7 @@ Options:
   -e, --no-execute    Don't execute the compiled program
   -p, --no-preserve   Don't preserve the output files
   -s, --separate      Compile each source file separately
+  -a, --args          Command-line arguments for compiled program
   -h, --help          Display this help message
 
 Examples:
@@ -82,15 +84,27 @@ while [[ $# -gt 0 && "$1" == -* ]]; do
         -o | --output)
             shift
             OUTFILE="$1"
+            shift
             ;;
         -e | --no-execute)
             EXECUTE=false
+            shift
             ;;
         -p | --no-preserve)
             PRESERVE=false
+            shift
             ;;
         -s | --separate)
             SEPARATE=true
+            shift
+            ;;
+        -a | --arg)
+            shift
+            [[ $# -gt 0 ]] || error "No program arguments provided"
+            while [[ $# -gt 0 && "$1" != -* && ! "$1" =~ \.c$ ]]; do
+                ARGS+=("$1")
+                shift
+            done
             ;;
         -h | --help)
             show_help
@@ -100,7 +114,6 @@ while [[ $# -gt 0 && "$1" == -* ]]; do
             error "Invalid option: $1"
             ;;
     esac
-    shift
 done
 
 C_FILES=()
@@ -135,7 +148,11 @@ compile_and_execute() {
             trap interrupt SIGINT
 
             set +e
-            "./$out"
+            if [[ ${#ARGS[@]} -gt 0 ]]; then
+                "./$out" "${ARGS[@]}"
+            else
+                "./$out"
+            fi
             exit_code=$?
             set -e
             separator
