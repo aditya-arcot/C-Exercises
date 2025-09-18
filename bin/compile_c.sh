@@ -96,7 +96,7 @@ while getopts ":o:epsa:h" opt; do
         p) PRESERVE=false ;;
         s) SEPARATE=true ;;
         a)
-            if [[ -z "$OPTARG" || "$OPTARG" == -* || "$OPTARG" =~ \.c$ ]]; then
+            if [[ -z "$OPTARG" ]]; then
                 error "Option -a requires at least one argument"
             fi
             # split quoted args into array
