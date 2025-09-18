@@ -32,7 +32,7 @@ Defaults:
 
 Examples:
   $(basename "$0") -eps file1.c file2.c
-  $(basename "$0") -o custom.out -a arg1 file1.c file2.c
+  $(basename "$0") -o custom.out -a "arg1 arg2" file1.c file2.c
 EOF
 }
 
@@ -99,7 +99,9 @@ while getopts ":o:epsa:h" opt; do
             if [[ -z "$OPTARG" || "$OPTARG" == -* || "$OPTARG" =~ \.c$ ]]; then
                 error "Option -a requires at least one argument"
             fi
-            ARGS+=("$OPTARG")
+            # split quoted args into array
+            read -ra ARGWORDS <<< "$OPTARG"
+            ARGS+=("${ARGWORDS[@]}")
             ;;
         h)
             show_help
