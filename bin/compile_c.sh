@@ -18,16 +18,21 @@ show_help() {
 Usage: $(basename "$0") [options] file1.c [file2.c ...]
 
 Options:
-  -o, --output        Specify the output file name
-  -e, --no-execute    Don't execute the compiled program
-  -p, --no-preserve   Don't preserve the output files
-  -s, --separate      Compile each source file separately
-  -a, --args          Command-line arguments for compiled program
-  -h, --help          Display this help message
+  -o file       Output file name
+  -e            Don't execute compiled program
+  -p            Don't preserve output files
+  -s            Compile each source file separately
+  -a arg        Command-line argument for compiled program
+  -h            Display this help message
+
+Defaults:
+  Execute       true
+  Preserve      true
+  Separate      false
 
 Examples:
-  $(basename "$0") -e -p -s file1.c file2.c
-  $(basename "$0") -o custom.out file1.c file2.c
+  $(basename "$0") -eps file1.c file2.c
+  $(basename "$0") -o custom.out -a arg1 file1.c file2.c
 EOF
 }
 
@@ -79,42 +84,32 @@ interrupt() {
     exit 1
 }
 
-while [[ $# -gt 0 && "$1" == -* ]]; do
-    case $1 in
-        -o | --output)
-            shift
-            OUTFILE="$1"
-            shift
+while getopts ":o:epsa:h" opt; do
+    case $opt in
+        o)
+            if [[ -z "$OPTARG" || "$OPTARG" == -* ]]; then
+                error "Option -o requires an argument"
+            fi
+            OUTFILE="$OPTARG"
             ;;
-        -e | --no-execute)
-            EXECUTE=false
-            shift
+        e) EXECUTE=false ;;
+        p) PRESERVE=false ;;
+        s) SEPARATE=true ;;
+        a)
+            if [[ -z "$OPTARG" || "$OPTARG" == -* || "$OPTARG" =~ \.c$ ]]; then
+                error "Option -a requires at least one argument"
+            fi
+            ARGS+=("$OPTARG")
             ;;
-        -p | --no-preserve)
-            PRESERVE=false
-            shift
-            ;;
-        -s | --separate)
-            SEPARATE=true
-            shift
-            ;;
-        -a | --arg)
-            shift
-            [[ $# -gt 0 ]] || error "No program arguments provided"
-            while [[ $# -gt 0 && "$1" != -* && ! "$1" =~ \.c$ ]]; do
-                ARGS+=("$1")
-                shift
-            done
-            ;;
-        -h | --help)
+        h)
             show_help
             exit 0
             ;;
-        *)
-            error "Invalid option: $1"
-            ;;
+        \?) error "Invalid option: -$OPTARG" ;;
+        :) error "Option -$OPTARG requires an argument" ;;
     esac
 done
+shift $((OPTIND - 1))
 
 C_FILES=()
 for arg in "$@"; do
