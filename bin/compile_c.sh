@@ -7,11 +7,11 @@ EXECUTE=true
 PRESERVE=true
 SEPARATE=false
 ARGS=()
-OUTPUTS=()
-CFLAGS=(-std=c17 -g -O0 -Werror -Wall -Wextra -Wpedantic)
+
 COMP_START=false
 COMP_COUNT=0
 COMP_ERR_COUNT=0
+OUTPUTS=()
 
 show_help() {
     cat << EOF
@@ -126,8 +126,44 @@ if $SEPARATE && [[ "$OUTFILE" != "program.out" ]]; then
     separator
 fi
 
-COMP_START=true
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+LIB_DIR="$REPO_ROOT/lib"
+LIB_NAME="libutils.a"
+LIB_PATH="$LIB_DIR/$LIB_NAME"
+UTILS_DIR="$REPO_ROOT/utils"
 
+build_library() {
+    echo "Building utility library $LIB_NAME"
+    mkdir -p "$LIB_DIR"
+
+    local obj_files=()
+    for src in "$UTILS_DIR"/*.c; do
+        base=$(basename "$src" .c)
+        obj="$LIB_DIR/$base.o"
+        if [[ ! -f "$obj" || "$src" -nt "$obj" ]]; then
+            echo "Compiling: $base.c -> $base.o"
+            cc -c "$src" -o "$obj" -I"$UTILS_DIR"
+        fi
+        obj_files+=("$obj")
+    done
+
+    echo "Creating library $LIB_NAME"
+    ar rcs "$LIB_PATH" "${obj_files[@]}"
+}
+
+if [[ ! -f "$LIB_PATH" ]]; then
+    build_library
+else
+    for src in "$UTILS_DIR"/*.c; do
+        if [[ "$src" -nt "$LIB_PATH" ]]; then
+            build_library
+            break
+        fi
+    done
+fi
+
+CFLAGS=(-std=c17 -g -O0 -Werror -Wall -Wextra -Wpedantic -I"$UTILS_DIR" -L"$LIB_DIR" -lutils)
 compile_and_execute() {
     local out="$1"
     shift
@@ -169,6 +205,7 @@ compile_and_execute() {
     fi
 }
 
+COMP_START=true
 if $SEPARATE; then
     FIRST=true
     for FILE in "${C_FILES[@]}"; do

@@ -6,9 +6,9 @@
             "type": "shell",
             "command": "${workspaceFolder}/bin/compile_c.sh",
             "args": [
-                "-e",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}.out",
+                "-e",
                 "${file}"
             ],
             "group": {
@@ -22,9 +22,9 @@
             "type": "shell",
             "command": "${workspaceFolder}/bin/compile_c.sh",
             "args": [
-                "-e",
                 "-o",
                 "${fileDirname}/program.out",
+                "-e",
                 "${fileDirname}/*.c"
             ],
             "group": {
