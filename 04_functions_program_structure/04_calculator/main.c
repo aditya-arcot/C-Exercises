@@ -6,16 +6,15 @@
 */
 
 #include "calc.h"
+#include "get_line.h"
 #include <ctype.h>
 #include <float.h>
 #include <math.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 bool debug = false;
 
-static int get_line(char line[], int max);
 static void handle_line(char line[], int len);
 static bool is_number(char line[], int idx);
 static int handle_number(char line[], int idx);
@@ -36,38 +35,10 @@ int main(void) {
     print_help_msg();
     printf("\n\n");
 
-    for (int len; (len = get_line(line, MAX_LINE_LENGTH)) != EOF;) {
+    for (int len; (len = get_line(line, MAX_LINE_LENGTH, false, true)) != EOF;) {
         handle_line(line, len);
     }
     printf("Exiting...\n");
-}
-
-// populate char array with line from standard input
-// return line length
-int get_line(char line[], int max_len) {
-    int ch = 0, i = 0;
-    bool blank = true;
-
-    while (max_len-- > 0 && (ch = getchar()) != EOF && ch != NEWLINE_CHAR)
-        // exclude leading blanks
-        if (!isblank(ch) || !blank) {
-            blank = false;
-            line[i++] = (char)ch;
-        }
-
-    if (i == 0 && ch == EOF)
-        return EOF;
-
-    line[i] = NULL_CHAR;
-
-    // skip remaining line
-    if (max_len < 0) {
-        for (int ch; (ch = getchar()) != EOF && ch != NEWLINE_CHAR;)
-            ;
-        printf("Warning: input line was trunctated to %s\n", line);
-    }
-
-    return i;
 }
 
 void handle_line(char line[], int len) {

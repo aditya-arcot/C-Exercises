@@ -1,15 +1,14 @@
 // convert integer to left-padded ASCII integer string
 
+#include "str_rev.h"
 #include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
 
 #define NULL_CHAR '\0'
 
 void run_itoa(int n, char s[], int min_width);
 void itoa(int n, char s[], int min_width);
 int abs(int n);
-void reverse(char s[]);
 
 int main(void) {
     char s[100];
@@ -49,21 +48,11 @@ void itoa(int n, char s[], int min_width) {
     s[i] = NULL_CHAR;
 
     // reverse string
-    reverse(s);
+    str_rev(s);
 }
 
 int abs(int n) {
     if (n < 0)
         return -n;
     return n;
-}
-
-void reverse(char s[]) {
-    int i, j;
-    char ch;
-    for (i = 0, j = (int)strlen(s) - 1; i < j; i++, j--) {
-        ch = s[i];
-        s[i] = s[j];
-        s[j] = ch;
-    }
 }

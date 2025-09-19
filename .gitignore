@@ -1,5 +1,7 @@
 .DS_Store
 *.out
+*.o
+*.a
 *.h.gch
 *.dSYM/
 settings.json

@@ -1,11 +1,11 @@
 // print each line of input that contains a string
 
+#include "get_line.h"
 #include <stdio.h>
 
 #define MAX_LINE 5
 #define NULL_CHAR '\0'
 
-int get_line(char line[], int max);
 int find_substring_idx(char str[], char substr[]);
 
 int main(void) {
@@ -13,7 +13,7 @@ int main(void) {
     char pattern[] = "abc";
 
     // while not EOF
-    while (get_line(line, MAX_LINE) != EOF) {
+    while (get_line(line, MAX_LINE, false, false) != EOF) {
         // skip empty line
         if (line[0] == NULL_CHAR)
             continue;
@@ -23,30 +23,6 @@ int main(void) {
             // print line
             printf("%s\n", line);
     }
-}
-
-int get_line(char line[], int max) {
-    int ch, i;
-    ch = i = 0;
-
-    // store characters until max length, EOF, or newline
-    while (max-- > 0 && (ch = getchar()) != EOF && ch != '\n')
-        line[i++] = (char)ch;
-
-    // EOF with no characters read
-    if (i == 0 && ch == EOF)
-        return EOF;
-
-    // null terminate
-    line[i] = NULL_CHAR;
-
-    // skip remaining characters in line
-    if (max < 0)
-        for (int ch; (ch = getchar()) != EOF && ch != '\n';)
-            ;
-
-    // return length
-    return i;
 }
 
 int find_substring_idx(char str[], char substr[]) {

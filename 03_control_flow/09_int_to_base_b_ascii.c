@@ -1,16 +1,14 @@
 // convert integer n into base b character representation in string s
 
-#include <limits.h>
+#include "str_rev.h"
 #include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
 
 #define NULL_CHAR '\0'
 
 void run_itob(int n, char s[], int base);
 void itob(int n, char s[], int base);
 int abs(int n);
-void reverse(char s[]);
 
 int main(void) {
     char s[100];
@@ -45,19 +43,11 @@ void itob(int n, char s[], int base) {
     s[i] = NULL_CHAR;
 
     // reverse string
-    reverse(s);
+    str_rev(s);
 }
 
 int abs(int n) {
     if (n < 0)
         return -n;
     return n;
-}
-
-void reverse(char s[]) {
-    for (int i = 0, j = (int)strlen(s) - 1; i < j; i++, j--) {
-        char ch = s[i];
-        s[i] = s[j];
-        s[j] = ch;
-    }
 }

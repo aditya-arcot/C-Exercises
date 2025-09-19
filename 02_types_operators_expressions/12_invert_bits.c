@@ -5,7 +5,7 @@
     position is measured right to left with 0 as rightmost bit
 */
 
-#include "../utils/binary_utils.h"
+#include "print_binary.h"
 #include <stdio.h>
 
 void run_invert_bits(unsigned x, int p_left, int n_bits);

@@ -1,10 +1,16 @@
+#include "print_binary.h"
 #include <stdbool.h>
 #include <stdio.h>
 
-#define BIT_WIDTH(x) (sizeof(x) * 8)
-
 static const int max_print_bits = 12;
 
+/*
+prints binary representation of x
+
+params:
+    x - unsigned int to print
+    truncate - if true, truncates to max_print_bits with leading "..."
+*/
 static void print_binary(unsigned x, bool truncate) {
     int bits = BIT_WIDTH(x);
     if (truncate && bits > max_print_bits) {
