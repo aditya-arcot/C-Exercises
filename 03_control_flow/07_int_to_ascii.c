@@ -1,6 +1,6 @@
 // convert integer to left-padded ASCII integer string
 
-#include "str_rev.h"
+#include "str_utils.h"
 #include <stdbool.h>
 #include <stdio.h>
 

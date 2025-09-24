@@ -6,7 +6,7 @@
 */
 
 #include "calc.h"
-#include "get_line.h"
+#include "line_utils.h"
 #include <ctype.h>
 #include <float.h>
 #include <math.h>
@@ -180,9 +180,9 @@ int handle_constant(char line[], int idx) {
     if (debug)
         printf("Constant: %s\n", constant);
 
-    if (str_cmp(constant, "e"))
+    if (str_eq(constant, "e"))
         push(M_E);
-    else if (str_cmp(constant, "pi"))
+    else if (str_eq(constant, "pi"))
         push(M_PI);
     else {
         printf("Warning: skipping unknown constant: #%s\n", constant);
@@ -291,48 +291,48 @@ int handle_function(char line[], int idx) {
     if (debug)
         printf("Function: %s\n", function);
 
-    if (str_cmp(function, "floor"))
+    if (str_eq(function, "floor"))
         push(floor(pop()));
-    else if (str_cmp(function, "ceil"))
+    else if (str_eq(function, "ceil"))
         push(ceil(pop()));
-    else if (str_cmp(function, "round"))
+    else if (str_eq(function, "round"))
         push(round(pop()));
-    else if (str_cmp(function, "trunc"))
+    else if (str_eq(function, "trunc"))
         push(trunc(pop()));
-    else if (str_cmp(function, "abs"))
+    else if (str_eq(function, "abs"))
         push(dbl_abs(pop()));
-    else if (str_cmp(function, "rand"))
+    else if (str_eq(function, "rand"))
         push(rand() / (double)RAND_MAX);
-    else if (str_cmp(function, "min"))
+    else if (str_eq(function, "min"))
         push(fmin(pop(), pop()));
-    else if (str_cmp(function, "max"))
+    else if (str_eq(function, "max"))
         push(fmax(pop(), pop()));
-    else if (str_cmp(function, "sqrt")) {
+    else if (str_eq(function, "sqrt")) {
         if (peek() < 0) {
             printf("Error: cannot take square root of negative number. Ignoring operation\n");
             return idx - 1;
         }
         push(sqrt(pop()));
-    } else if (str_cmp(function, "pow")) {
+    } else if (str_eq(function, "pow")) {
         double y = pop();
         push(pow(pop(), y));
-    } else if (str_cmp(function, "exp"))
+    } else if (str_eq(function, "exp"))
         push(exp(pop()));
-    else if (str_cmp(function, "log"))
+    else if (str_eq(function, "log"))
         push(log10(pop()));
-    else if (str_cmp(function, "ln"))
+    else if (str_eq(function, "ln"))
         push(log(pop()));
-    else if (str_cmp(function, "sin"))
+    else if (str_eq(function, "sin"))
         push(sin(pop()));
-    else if (str_cmp(function, "cos"))
+    else if (str_eq(function, "cos"))
         push(cos(pop()));
-    else if (str_cmp(function, "tan"))
+    else if (str_eq(function, "tan"))
         push(tan(pop()));
-    else if (str_cmp(function, "asin"))
+    else if (str_eq(function, "asin"))
         push(asin(pop()));
-    else if (str_cmp(function, "acos"))
+    else if (str_eq(function, "acos"))
         push(acos(pop()));
-    else if (str_cmp(function, "atan"))
+    else if (str_eq(function, "atan"))
         push(atan(pop()));
     else {
         printf("Warning: skipping unknown function: @%s\n", function);
@@ -367,19 +367,19 @@ int handle_command(char line[], int idx) {
     if (debug)
         printf("Command: %s\n", command);
 
-    if (str_cmp(command, "h") || str_cmp(command, "help"))
+    if (str_eq(command, "h") || str_eq(command, "help"))
         print_help_msg();
-    else if (str_cmp(command, "c") || str_cmp(command, "clear"))
+    else if (str_eq(command, "c") || str_eq(command, "clear"))
         clear_stack();
-    else if (str_cmp(command, "pr") || str_cmp(command, "print"))
+    else if (str_eq(command, "pr") || str_eq(command, "print"))
         print_stack();
-    else if (str_cmp(command, "pop"))
+    else if (str_eq(command, "pop"))
         printf("Removed value: %g\n", pop());
-    else if (str_cmp(command, "peek"))
+    else if (str_eq(command, "peek"))
         printf("Top value: %g\n", peek());
-    else if (str_cmp(command, "d") || str_cmp(command, "dup"))
+    else if (str_eq(command, "d") || str_eq(command, "dup"))
         push(peek());
-    else if (str_cmp(command, "s") || str_cmp(command, "swap")) {
+    else if (str_eq(command, "s") || str_eq(command, "swap")) {
         temp1 = pop();
         temp2 = pop();
         push(temp1);

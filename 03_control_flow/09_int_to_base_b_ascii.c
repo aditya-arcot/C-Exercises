@@ -1,6 +1,6 @@
 // convert integer n into base b character representation in string s
 
-#include "str_rev.h"
+#include "str_utils.h"
 #include <stdbool.h>
 #include <stdio.h>
 

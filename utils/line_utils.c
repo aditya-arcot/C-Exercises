@@ -1,4 +1,6 @@
-#include "get_line.h"
+#include "line_utils.h"
+#include "alloc.h"
+#include "str_utils.h"
 #include <ctype.h>
 #include <stdio.h>
 
@@ -39,3 +41,44 @@ int get_line(char line[], int max_len, bool allow_overflow, bool exclude_leading
     line[i] = NULL_CHAR;
     return allow_overflow ? j : i;
 }
+
+#define MAX_LEN 1000
+
+/*
+reads lines & returns number of lines
+from 05_pointers_arrays/11_str_sort.c
+
+params:
+    line_ptrs: array of string pointers to store lines
+    max_lines: max number of lines to read
+
+returns:
+    number of lines read
+    if too many lines, LINES_OVERFLOW (-1)
+    if alloc fails, ALLOC_ERR (-2)
+*/
+int read_lines(char *line_ptrs[], int max_lines) {
+    int len, n_lines = 0;
+    char *ptr, line[MAX_LEN + 1];
+    while ((len = get_line(line, MAX_LEN, false, false)) > 0) {
+        if (n_lines >= max_lines)
+            return LINES_OVERFLOW;
+        // 1 extra for null char
+        ptr = alloc(len + 1);
+        if (ptr == NULL)
+            return ALLOC_ERR;
+        str_copy(line, ptr);
+        line_ptrs[n_lines++] = ptr;
+    }
+    return n_lines;
+}
+
+/*
+writes lines to stdout
+from 05_pointers_arrays/11_str_sort.c
+*/
+void write_lines(char *line_ptrs[], int n_lines) {
+    while (n_lines-- > 0)
+        printf("%s\n", *line_ptrs++);
+}
+

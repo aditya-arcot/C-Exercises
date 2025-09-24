@@ -16,7 +16,7 @@ extern bool debug;
 
 double dbl_abs(double num);
 double dbl_mod(double x, double y);
-bool str_cmp(const char *s1, const char *s2);
+bool str_eq(const char *s1, const char *s2);
 
 void init_stack(void);
 void push(double num);

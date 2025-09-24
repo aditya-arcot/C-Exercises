@@ -1,6 +1,6 @@
 // print longest line and its length from input
 
-#include "get_line.h"
+#include "line_utils.h"
 #include <stdio.h>
 
 #define MAX_LINE_PREVIEW 50

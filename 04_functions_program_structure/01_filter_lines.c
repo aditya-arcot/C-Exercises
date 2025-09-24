@@ -1,6 +1,6 @@
 // print each line of input that contains a string
 
-#include "get_line.h"
+#include "line_utils.h"
 #include <stdio.h>
 
 #define MAX_LINE 5

@@ -13,7 +13,7 @@ double dbl_mod(double x, double y) {
     return x - ((int)(x / y) * y);
 }
 
-bool str_cmp(const char *s1, const char *s2) {
+bool str_eq(const char *s1, const char *s2) {
     while (*s1 && *s2) {
         if (*s1 != *s2)
             return false;

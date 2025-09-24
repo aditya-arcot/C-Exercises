@@ -1,0 +1,1 @@
+x is array[3] of pointer to function returning pointer to array[5] of void
