@@ -65,7 +65,7 @@ int read_lines(char *line_ptrs[], int max_lines) {
             return LINES_OVERFLOW;
         // 1 extra for null char
         ptr = alloc(len + 1);
-        if (ptr == NULL)
+        if (!ptr)
             return ALLOC_ERR;
         str_copy(line, ptr);
         line_ptrs[n_lines++] = ptr;
@@ -81,4 +81,3 @@ void write_lines(char *line_ptrs[], int n_lines) {
     while (n_lines-- > 0)
         printf("%s\n", *line_ptrs++);
 }
-

@@ -1,4 +1,13 @@
-Run `source setup` to add bin folder to PATH and configure git hooks
-Use `format_bash.sh` for formatting Bash files
-Use `lint_bash.sh` for linting Bash files
-Use `format_c.sh` for formatting C files
+### Useful Commands
+
+`source setup.sh` - add `/bin` folder to `PATH` & configure `git` hooks
+
+`format_bash.sh`
+
+`lint_bash.sh`
+
+`format_c.sh`
+
+### Skipped Exercises
+
+6.6 - `#define` processor

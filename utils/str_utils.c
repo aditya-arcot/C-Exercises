@@ -1,4 +1,5 @@
 #include "str_utils.h"
+#include <stdlib.h>
 #include <string.h>
 
 /*
@@ -51,9 +52,9 @@ params:
     fold - if true, ignore case differences
 
 returns:
-    <0 if s<t
-    0 if s==t
-    >0 if s>t
+    < 0 if s < t
+    0 if s == t
+    > 0 if s > t
 */
 int str_cmp(char *s, char *t, bool fold) {
     for (; char_diff(*s, *t, fold) == 0; s++, t++)
@@ -75,4 +76,18 @@ void str_cat(char *s, char *t) {
         t++;
     while ((*t++ = *s++))
         ;
+}
+
+/*
+duplicates string s
+
+params:
+    s - source string
+*/
+char *str_dup(char *s) {
+    char *dup = (char *)malloc(strlen(s) + 1);
+    // dup is null if malloc fails
+    if (dup)
+        str_copy(s, dup);
+    return dup;
 }
