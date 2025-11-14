@@ -54,18 +54,24 @@ cleanup() {
     if $COMP_START; then
         if ! $PRESERVE; then
             separator
-            echo "Cleaning up..."
+            echo "Removing output files..."
             for f in "${OUTPUTS[@]-}"; do
                 if [[ -f "$f" ]]; then
                     echo "Removing $f"
                     rm -f "$f"
                 fi
-                if [[ -d "$f.dSYM" ]]; then
-                    echo "Removing $f.dSYM"
-                    rm -rf "$f.dSYM"
-                fi
             done
         fi
+
+        separator
+        echo "Cleaning up..."
+        for f in "${OUTPUTS[@]-}"; do
+            if [[ -d "$f.dSYM" ]]; then
+                echo "Removing $f.dSYM"
+                rm -rf "$f.dSYM"
+            fi
+        done
+
         separator
         echo "Finished after $COMP_COUNT compilation(s) with $COMP_ERR_COUNT error(s)"
         if [[ $COMP_ERR_COUNT -gt 0 ]]; then
